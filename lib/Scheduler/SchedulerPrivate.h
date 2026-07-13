@@ -2,7 +2,7 @@
  * Project : AccelMeter
  * Module  : Scheduler
  * File    : SchedulerPrivate.h
- * Version : 1.0.0
+ * Version : 2.0.0
  ******************************************************************************/
 
 #ifndef SCHEDULER_PRIVATE_H

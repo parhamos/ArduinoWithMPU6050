@@ -2,20 +2,26 @@
  * Project : AccelMeter
  * Module  : Scheduler
  * File    : Scheduler.cpp
- * Version : 1.0.0
+ * Version : 2.0.0
  ******************************************************************************/
 
 #include "Scheduler.h"
 
 Scheduler scheduler;
 
-bool Scheduler::elapsed(uint32_t &timer, uint32_t period)
+bool Scheduler::run(Task &task)
 {
+    if (!task.enable)
+        return false;
+
     uint32_t now = millis();
 
-    if ((now - timer) >= period)
+    if ((now - task.timer) >= task.period)
     {
-        timer = now;
+        task.timer = now;
+
+        task.counter++;
+
         return true;
     }
 

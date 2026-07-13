@@ -2,7 +2,7 @@
  * Project : AccelMeter
  * Module  : Scheduler
  * File    : Scheduler.h
- * Version : 1.0.0
+ * Version : 2.0.0
  ******************************************************************************/
 
 #ifndef SCHEDULER_H
@@ -10,12 +10,38 @@
 
 #include <Arduino.h>
 
+/**************************************************
+ * Task
+ **************************************************/
+
+struct Task
+{
+    uint32_t timer = 0;
+
+    uint16_t period = 100;
+
+    bool enable = true;
+
+    uint32_t counter = 0;
+
+    Task() {}
+
+    Task(uint16_t p)
+    {
+        period = p;
+    }
+};
+
+/**************************************************
+ * Scheduler
+ **************************************************/
+
 class Scheduler
 {
 
 public:
 
-    bool elapsed(uint32_t &timer, uint32_t period);
+    bool run(Task &task);
 
 };
 

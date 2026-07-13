@@ -2,7 +2,7 @@
  * Project : AccelMeter
  * Module  : Scheduler
  * File    : SchedulerConfig.h
- * Version : 1.0.0
+ * Version : 2.0.0
  ******************************************************************************/
 
 #ifndef SCHEDULER_CONFIG_H
