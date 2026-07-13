@@ -1,8 +1,11 @@
 /******************************************************************************
- * Project : AccelMeter
- * Module  : Model
- * File    : ModelTypes.h
- * Version : 1.0.0
+ *
+ * Project    : Robonix AccelMeter
+ * Module     : Model
+ * File       : ModelTypes.h
+ *
+ * Version    : 0.2.1
+ *
  ******************************************************************************/
 
 #ifndef MODEL_TYPES_H
@@ -11,158 +14,83 @@
 #include <Arduino.h>
 
 /*=============================================================================
-    Enumerations
-=============================================================================*/
-
-enum class Unit : uint8_t
-{
-    MS2 = 0,
-    G
-};
-
-enum class SensorState : uint8_t
-{
-    Offline = 0,
-    Online,
-    Error
-};
-
-enum class CalibrationState : uint8_t
-{
-    None = 0,
-    Running,
-    Completed
-};
-
-enum class FilterType : uint8_t
-{
-    None = 0,
-    LowPass,
-    Kalman
-};
-
-enum class LCDPage : uint8_t
-{
-    Main = 0,
-    Statistics,
-    System
-};
-
-/*=============================================================================
     Basic Types
 =============================================================================*/
 
 struct Vector3f
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
+    float x;
+    float y;
+    float z;
 };
 
-struct TemperatureData
-{
-    float value = 0.0f;
-};
+using Timestamp = uint32_t;
 
-struct TimeData
+/*=============================================================================
+    Units
+=============================================================================*/
+
+enum class AccelerationUnit : uint8_t
 {
-    uint32_t millis = 0;
+    MeterPerSecondSquared = 0,
+    G
 };
 
 /*=============================================================================
-    Measurement
+    Firmware State
 =============================================================================*/
 
-struct MeasurementData
+enum class FirmwareState : uint8_t
 {
-    Vector3f raw;
-
-    Vector3f calibrated;
-
-    Vector3f filtered;
+    Boot = 0,
+    Initializing,
+    Ready,
+    Warning,
+    Error
 };
 
 /*=============================================================================
-    Statistics
+    Sensor State
 =============================================================================*/
 
-struct StatisticsData
+enum class SensorState : uint8_t
 {
-    float magnitude = 0.0f;
+    Offline = 0,
+    Initializing,
+    Ready,
+    Error
+};
 
-    float rms = 0.0f;
+/*=============================================================================
+    Calibration
+=============================================================================*/
 
-    float peak = 0.0f;
-
-    float peakToPeak = 0.0f;
-
-    float mean = 0.0f;
-
-    float variance = 0.0f;
+enum class CalibrationState : uint8_t
+{
+    NotCalibrated = 0,
+    Running,
+    Completed
 };
 
 /*=============================================================================
     Communication
 =============================================================================*/
 
-struct CommunicationData
+enum class CommunicationState : uint8_t
 {
-    uint32_t frames = 0;
-
-    uint32_t lostFrames = 0;
-
-    bool serialConnected = false;
-
-    uint32_t baudRate = 115200UL;
+    Disconnected = 0,
+    Connected
 };
 
 /*=============================================================================
-    Device Settings
+    Display
 =============================================================================*/
 
-struct DeviceSettings
+enum class DisplayPage : uint8_t
 {
-    Unit unit = Unit::MS2;
-
-    FilterType filter = FilterType::LowPass;
-
-    LCDPage lcdPage = LCDPage::Main;
-
-    uint16_t sampleRate = 100;
-};
-
-/*=============================================================================
-    System Status
-=============================================================================*/
-
-struct SystemStatus
-{
-    SensorState sensor = SensorState::Offline;
-
-    CalibrationState calibration = CalibrationState::None;
-
-    uint32_t uptime = 0;
-};
-
-/*=============================================================================
-    Root Object
-=============================================================================*/
-
-struct SystemData
-{
-    MeasurementData measurement;
-
-    TemperatureData temperature;
-
-    StatisticsData statistics;
-
-    CommunicationData communication;
-
-    DeviceSettings settings;
-
-    SystemStatus status;
-
-    TimeData time;
+    Acceleration = 0,
+    Magnitude,
+    System
 };
 
 #endif

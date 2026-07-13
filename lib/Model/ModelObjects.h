@@ -2,70 +2,100 @@
  *
  * Project    : Robonix AccelMeter
  * Module     : Model
- * File       : ModelConfig.h
+ * File       : ModelObjects.h
  *
  * Version    : 0.2.0
  *
  * Description:
- *      Global configuration for the Data Model.
+ *      Firmware Data Objects
  *
  ******************************************************************************/
 
-#ifndef MODEL_CONFIG_H
-#define MODEL_CONFIG_H
+#ifndef MODEL_OBJECTS_H
+#define MODEL_OBJECTS_H
 
 #include <Arduino.h>
 
-/*=============================================================================
-    Model Version
-=============================================================================*/
-
-constexpr uint8_t kModelVersionMajor = 0U;
-constexpr uint8_t kModelVersionMinor = 2U;
-constexpr uint8_t kModelVersionPatch = 0U;
+#include "ModelConfig.h"
+#include "ModelTypes.h"
 
 /*=============================================================================
-    Internal Units
+    Raw Acceleration Sample
 =============================================================================*/
 
-/*
- * IMPORTANT
- *
- * All acceleration values inside the firmware shall be stored
- * in SI units (m/s²).
- *
- * Conversion to "g" shall only be performed by the Display
- * or Protocol modules.
- */
+struct AccelerationSample
+{
+    Vector3f value;          // m/s²
+    Timestamp timestamp;     // ms
+};
 
 /*=============================================================================
-    Physical Constants
+    Measurement Frame
 =============================================================================*/
 
-constexpr float kStandardGravity = 9.80665f;
+struct MeasurementFrame
+{
+    Vector3f raw;
+
+    Vector3f calibrated;
+
+    Vector3f filtered;
+
+    float magnitude;
+
+    Timestamp timestamp;
+
+    uint32_t frameNumber;
+};
+/*=============================================================================
+    Statistics
+=============================================================================*/
+
+struct StatisticsData
+{
+    float rms;
+
+    float peak;
+
+    float mean;
+
+    float sampleRate;
+};
 
 /*=============================================================================
-    Sampling Configuration
+    Calibration
 =============================================================================*/
 
-constexpr uint16_t kDefaultSampleRate = 100U;      // Hz
+struct CalibrationData
+{
+    CalibrationState state;
+
+    Vector3f offset;
+};
 
 /*=============================================================================
-    Statistics Configuration
+    Device Configuration
 =============================================================================*/
 
-constexpr uint16_t kRmsWindowSize = 100U;
+struct DeviceConfiguration
+{
+    uint16_t sampleRate;
+
+    AccelerationUnit unit;
+};
 
 /*=============================================================================
-    Communication
+    Device Status
 =============================================================================*/
 
-constexpr uint32_t kDefaultBaudRate = 115200UL;
+struct DeviceStatus
+{
+    FirmwareState firmware;
 
-/*=============================================================================
-    Display
-=============================================================================*/
+    SensorState sensor;
 
-constexpr uint16_t kLcdRefreshPeriod = 250U;       // ms
+    CommunicationState serial;
 
-#endif // MODEL_CONFIG_H
+    CalibrationState calibration;
+};
+#endif // MODEL_OBJECTS_H
