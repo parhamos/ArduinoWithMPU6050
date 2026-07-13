@@ -1,15 +1,18 @@
 /******************************************************************************
  *
  * Project    : Robonix AccelMeter
- * Module     : Sensor
- * File       : SensorConfig.h
+ * Module     : Statistics
+ * File       : StatisticsConfig.h
  *
  * Version    : 0.3.0
  *
+ * Description:
+ *      Global configuration for Statistics module.
+ *
  ******************************************************************************/
 
-#ifndef SENSOR_CONFIG_H
-#define SENSOR_CONFIG_H
+#ifndef STATISTICS_CONFIG_H
+#define STATISTICS_CONFIG_H
 
 #include <Arduino.h>
 
@@ -17,74 +20,58 @@
     Module Version
 =============================================================================*/
 
-constexpr uint8_t kSensorVersionMajor = 0;
-constexpr uint8_t kSensorVersionMinor = 3;
-constexpr uint8_t kSensorVersionPatch = 0;
-
-
-/*=============================================================================
-    MPU6050 I2C Address
-=============================================================================*/
-
-constexpr uint8_t kMpu6050Address = 0x68;
-
+constexpr uint8_t kStatisticsVersionMajor = 0;
+constexpr uint8_t kStatisticsVersionMinor = 3;
+constexpr uint8_t kStatisticsVersionPatch = 0;
 
 /*=============================================================================
-    Accelerometer Range
+    Magnitude
 =============================================================================*/
 
-enum class AccelerometerRange : uint8_t
-{
-    Range2G = 0,
-    Range4G,
-    Range8G,
-    Range16G
-};
-
-constexpr AccelerometerRange kDefaultAccelerometerRange =
-    AccelerometerRange::Range2G;
-
+constexpr bool kEnableMagnitude = true;
 
 /*=============================================================================
-    Gyroscope Range
+    RMS
 =============================================================================*/
 
-enum class GyroscopeRange : uint8_t
-{
-    Range250DPS = 0,
-    Range500DPS,
-    Range1000DPS,
-    Range2000DPS
-};
+constexpr bool kEnableRMS = true;
 
-constexpr GyroscopeRange kDefaultGyroscopeRange =
-    GyroscopeRange::Range250DPS;
-
+/*
+    Number of samples used for RMS calculation.
+*/
+constexpr uint16_t kRmsWindowSize = 100;
 
 /*=============================================================================
-    Digital Low Pass Filter
+    Peak
 =============================================================================*/
 
-enum class FilterBandwidth : uint8_t
-{
-    Hz260 = 0,
-    Hz184,
-    Hz94,
-    Hz44,
-    Hz21,
-    Hz10,
-    Hz5
-};
-
-constexpr FilterBandwidth kDefaultFilterBandwidth =
-    FilterBandwidth::Hz44;
-
+constexpr bool kEnablePeak = true;
 
 /*=============================================================================
-    Features
+    Mean
 =============================================================================*/
 
-constexpr bool kEnableInternalFilter = true;
+constexpr bool kEnableMean = true;
 
+/*=============================================================================
+    Sample Rate
+=============================================================================*/
 
-#endif // SENSOR_CONFIG_H
+constexpr bool kEnableSampleRate = true;
+
+/*
+    Update period for sample-rate estimation.
+*/
+constexpr uint16_t kSampleRatePeriodMs = 1000;
+
+/*=============================================================================
+    Future Features
+=============================================================================*/
+
+constexpr bool kEnableFFT = false;
+constexpr bool kEnableTHD = false;
+constexpr bool kEnablePSD = false;
+constexpr bool kEnableKurtosis = false;
+constexpr bool kEnableSkewness = false;
+
+#endif

@@ -1,43 +1,54 @@
+/******************************************************************************
+ *
+ * Project    : Robonix AccelMeter
+ * File       : main.cpp
+ *
+ ******************************************************************************/
+
 #include <Arduino.h>
 
-#include "Config.h"
-
-#include "Display.h"
+#include "Model.h"
 #include "Sensor.h"
+#include "Display.h"
+
+/*=============================================================================
+    Arduino Setup
+=============================================================================*/
 
 void setup()
 {
-    Serial.begin(SERIAL_BAUD);
+    Serial.begin(115200);
+
+    model.begin();
+
+    sensor.begin();
 
     display.begin();
+
     display.splash();
-
-    delay(1500);
-
-    if(sensor.begin())
-    {
-        display.showError("Sensor OK");
-    }
-    else
-    {
-        display.showError("Sensor ERROR");
-
-        while(true);
-    }
 }
+
+/*=============================================================================
+    Arduino Loop
+=============================================================================*/
 
 void loop()
 {
-    sensor.update();
+    sensor.update(model);
 
-    Serial.print("AX=");
-    Serial.print(sensor.ax(),3);
+    const MeasurementFrame& measurement =
+        model.measurement();
 
-    Serial.print(" AY=");
-    Serial.print(sensor.ay(),3);
+    Serial.print(F("AX="));
+    Serial.print(measurement.raw.x, 3);
 
-    Serial.print(" AZ=");
-    Serial.println(sensor.az(),3);
+    Serial.print(F(" AY="));
+    Serial.print(measurement.raw.y, 3);
+
+    Serial.print(F(" AZ="));
+    Serial.println(measurement.raw.z, 3);
+
+    display.update();
 
     delay(100);
 }
