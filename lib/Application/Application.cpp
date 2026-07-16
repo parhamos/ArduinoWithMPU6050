@@ -48,19 +48,21 @@ bool Application::begin()
         return false;
 
     Serial.println("Sensor");
-    if (!sensor.begin())
-        return false;
-
-    Serial.println("Calibration");
-
-    bool ok = calibration.begin();
+    bool ok = sensor.begin();
 
     Serial.println(ok);
-
     if (!ok)
     {
         return false;
     }
+
+    //Serial.println("Sensor");
+    //if (!sensor.begin())
+    //    return false;
+
+    Serial.println("Calibration");
+    if (!calibration.begin())
+        return false;
 
     Serial.println("Filter");
     if (!filter.begin())
