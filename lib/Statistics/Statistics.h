@@ -4,7 +4,7 @@
  * Module     : Statistics
  * File       : Statistics.h
  *
- * Version    : 0.3.0
+ * Version    : 1.0.0
  *
  * Description:
  *      Statistical calculations for acceleration measurements.
@@ -26,10 +26,10 @@ public:
 
     bool begin();
 
-    void update(Model& model);
+    bool update(Model& model);
 
     /*======================================================================
-        Mathematical Functions
+        Statistical Functions
     ======================================================================*/
 
     float calculateMagnitude(const Vector3f& value) const;

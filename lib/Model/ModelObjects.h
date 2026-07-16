@@ -4,10 +4,10 @@
  * Module     : Model
  * File       : ModelObjects.h
  *
- * Version    : 0.2.0
+ * Version    : 1.0.0
  *
  * Description:
- *      Firmware Data Objects
+ *      Firmware Runtime Data Objects
  *
  ******************************************************************************/
 
@@ -18,16 +18,6 @@
 
 #include "ModelConfig.h"
 #include "ModelTypes.h"
-
-/*=============================================================================
-    Raw Acceleration Sample
-=============================================================================*/
-
-struct AccelerationSample
-{
-    Vector3f value;          // m/s²
-    Timestamp timestamp;     // ms
-};
 
 /*=============================================================================
     Measurement Frame
@@ -47,6 +37,7 @@ struct MeasurementFrame
 
     uint32_t frameNumber;
 };
+
 /*=============================================================================
     Statistics
 =============================================================================*/
@@ -82,6 +73,8 @@ struct DeviceConfiguration
     uint16_t sampleRate;
 
     AccelerationUnit unit;
+
+    FilterType filterType;
 };
 
 /*=============================================================================
@@ -98,4 +91,5 @@ struct DeviceStatus
 
     CalibrationState calibration;
 };
+
 #endif // MODEL_OBJECTS_H

@@ -4,7 +4,7 @@
  * Module     : Sensor
  * File       : Sensor.cpp
  *
- * Version    : 0.3.0
+ * Version    : 1.0.0
  *
  ******************************************************************************/
 
@@ -124,7 +124,8 @@ Sensor sensor;
 Sensor::Sensor()
     :
     connected_(false),
-    temperature_(0.0f)
+    temperature_(0.0f),
+    sampleRate_(kDefaultSampleRate)
 {
 }
 /*=============================================================================
@@ -182,7 +183,7 @@ bool Sensor::begin()
     */
 
     temperature_ = 0.0f;
-
+    sampleRate_ = kDefaultSampleRate;
     connected_ = true;
 
     return true;

@@ -3,13 +3,22 @@
  * Project    : Robonix AccelMeter
  * File       : main.cpp
  *
+ * Version    : 1.0.0
+ *
+ * Description:
+ *      Application entry point.
+ *
  ******************************************************************************/
 
 #include <Arduino.h>
-
+#include "Application.h"
 #include "Model.h"
 #include "Sensor.h"
+#include "Calibration.h"
+#include "Filter.h"
+#include "Statistics.h"
 #include "Display.h"
+#include "Protocol.h"
 
 /*=============================================================================
     Arduino Setup
@@ -17,16 +26,9 @@
 
 void setup()
 {
-    Serial.begin(115200);
-
-    model.begin();
-
-    sensor.begin();
-
-    display.begin();
-
-    display.splash();
+    application.begin();
 }
+
 
 /*=============================================================================
     Arduino Loop
@@ -34,21 +36,5 @@ void setup()
 
 void loop()
 {
-    sensor.update(model);
-
-    const MeasurementFrame& measurement =
-        model.measurement();
-
-    Serial.print(F("AX="));
-    Serial.print(measurement.raw.x, 3);
-
-    Serial.print(F(" AY="));
-    Serial.print(measurement.raw.y, 3);
-
-    Serial.print(F(" AZ="));
-    Serial.println(measurement.raw.z, 3);
-
-    display.update();
-
-    delay(100);
+    application.run();
 }

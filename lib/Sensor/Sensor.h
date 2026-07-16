@@ -4,10 +4,10 @@
  * Module     : Sensor
  * File       : Sensor.h
  *
- * Version    : 0.3.0
+ * Version    : 1.0.0
  *
  * Description:
- *      MPU6050 sensor driver.
+ *        MPU6050 sensor interface.
  *
  ******************************************************************************/
 

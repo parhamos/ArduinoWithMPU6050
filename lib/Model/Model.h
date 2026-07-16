@@ -4,10 +4,10 @@
  * Module     : Model
  * File       : Model.h
  *
- * Version    : 0.2.0
+ * Version    : 1.0.0
  *
  * Description:
- *      Central Data Model
+ *      Central runtime data storage for all firmware modules.
  *
  ******************************************************************************/
 
@@ -36,6 +36,15 @@ public:
 
     const MeasurementFrame& measurement() const;
 
+  /*======================================================================
+        Calibration
+    ======================================================================*/
+
+    CalibrationData& calibration();
+
+    const CalibrationData& calibration() const;
+
+
     /*======================================================================
         Statistics
     ======================================================================*/
@@ -44,14 +53,7 @@ public:
 
     const StatisticsData& statistics() const;
 
-    /*======================================================================
-        Calibration
-    ======================================================================*/
-
-    CalibrationData& calibration();
-
-    const CalibrationData& calibration() const;
-
+  
     /*======================================================================
         Configuration
     ======================================================================*/

@@ -1,71 +1,64 @@
 /******************************************************************************
  *
  * Project    : Robonix AccelMeter
- * Module     : Model
- * File       : ModelConfig.h
+ * Module     : Filter
+ * File       : FilterConfig.h
  *
- * Version    : 1.0.0
+ * Version    : 2.0.0
  *
  * Description:
- *      Global configuration constants for the firmware data model.
+ *      Configuration parameters for the Filter module.
  *
  ******************************************************************************/
 
-#ifndef MODEL_CONFIG_H
-#define MODEL_CONFIG_H
+#ifndef FILTER_CONFIG_H
+#define FILTER_CONFIG_H
 
 #include <Arduino.h>
-
+#include "ModelTypes.h"
 /*=============================================================================
-    Model Version
+    Module Version
 =============================================================================*/
 
-constexpr uint8_t kModelVersionMajor = 1U;
-constexpr uint8_t kModelVersionMinor = 0U;
-constexpr uint8_t kModelVersionPatch = 0U;
+constexpr uint8_t kFilterVersionMajor = 2U;
+constexpr uint8_t kFilterVersionMinor = 0U;
+constexpr uint8_t kFilterVersionPatch = 0U;
+
+
 
 /*=============================================================================
-    Internal Units
+    Default Configuration
 =============================================================================*/
 
-/*
- * IMPORTANT
- *
- * All acceleration values inside the firmware shall be stored
- * in SI units (m/s²).
- *
- * Conversion to "g" shall only be performed by the Display
- * or Protocol modules.
- */
+constexpr FilterType kDefaultFilterType =
+    FilterType::IIR;
 
 /*=============================================================================
-    Physical Constants
+    IIR Low Pass
 =============================================================================*/
 
-constexpr float kStandardGravity = 9.80665f;
+constexpr float kIirAlpha = 0.15f;
 
 /*=============================================================================
-    Sampling Configuration
+    Moving Average
 =============================================================================*/
 
-constexpr uint16_t kDefaultSampleRate = 100U;      // Hz
+constexpr uint8_t kMovingAverageWindow = 8U;
 
 /*=============================================================================
-    Statistics Configuration
+    Median Filter
 =============================================================================*/
 
-constexpr uint16_t kRmsWindowSize = 100U;
+constexpr uint8_t kMedianWindow = 5U;
 
 /*=============================================================================
-    Communication
+    Kalman Filter
 =============================================================================*/
 
-constexpr uint32_t kDefaultBaudRate = 115200UL;
+constexpr float kKalmanProcessNoise = 0.001f;
 
-/*=============================================================================
-    Display
-=============================================================================*/
+constexpr float kKalmanMeasurementNoise = 0.10f;
 
-constexpr uint16_t kLcdRefreshPeriod = 250U;       // ms
+constexpr float kKalmanInitialError = 1.0f;
 
-#endif // MODEL_CONFIG_H
+#endif // FILTER_CONFIG_H

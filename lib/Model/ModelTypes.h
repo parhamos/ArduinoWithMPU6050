@@ -4,7 +4,10 @@
  * Module     : Model
  * File       : ModelTypes.h
  *
- * Version    : 0.2.1
+ * Version    : 1.0.0
+ *
+ * Description:
+ *      Common firmware data types.
  *
  ******************************************************************************/
 
@@ -62,7 +65,7 @@ enum class SensorState : uint8_t
 };
 
 /*=============================================================================
-    Calibration
+    Calibration State
 =============================================================================*/
 
 enum class CalibrationState : uint8_t
@@ -73,7 +76,7 @@ enum class CalibrationState : uint8_t
 };
 
 /*=============================================================================
-    Communication
+    Communication State
 =============================================================================*/
 
 enum class CommunicationState : uint8_t
@@ -83,7 +86,7 @@ enum class CommunicationState : uint8_t
 };
 
 /*=============================================================================
-    Display
+    Display Pages
 =============================================================================*/
 
 enum class DisplayPage : uint8_t
@@ -93,4 +96,21 @@ enum class DisplayPage : uint8_t
     System
 };
 
-#endif
+/*=============================================================================
+    Filter Type
+=============================================================================*/
+
+enum class FilterType : uint8_t
+{
+    None = 0,
+
+    IIR,
+
+    MovingAverage,
+
+    Median,
+
+    Kalman
+};
+
+#endif // MODEL_TYPES_H

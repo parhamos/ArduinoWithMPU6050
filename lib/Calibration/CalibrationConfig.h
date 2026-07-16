@@ -1,35 +1,34 @@
 /******************************************************************************
  *
  * Project    : Robonix AccelMeter
- * Module     : Display
- * File       : DisplayConfig.h
+ * Module     : Calibration
+ * File       : CalibrationConfig.h
  *
  * Version    : 1.0.0
  *
  * Description:
- *      Configuration constants for the Display module.
+ *      Configuration parameters for the Calibration module.
  *
  ******************************************************************************/
 
-#ifndef DISPLAY_CONFIG_H
-#define DISPLAY_CONFIG_H
+#ifndef CALIBRATION_CONFIG_H
+#define CALIBRATION_CONFIG_H
 
 #include <Arduino.h>
 
 /*=============================================================================
-    LCD Hardware Configuration
+    Module Version
 =============================================================================*/
 
-constexpr uint8_t LCD_ADDRESS = 0x27U;
-
-constexpr uint8_t LCD_COLS = 16U;
-
-constexpr uint8_t LCD_ROWS = 2U;
+constexpr uint8_t kCalibrationVersionMajor = 1U;
+constexpr uint8_t kCalibrationVersionMinor = 0U;
+constexpr uint8_t kCalibrationVersionPatch = 0U;
 
 /*=============================================================================
-    Timing
+    Calibration Configuration
 =============================================================================*/
 
-constexpr uint16_t LCD_SPLASH_TIME = 2000U;
+// Number of samples used to calculate the zero offset.
+constexpr uint16_t kCalibrationSampleCount = 100U;
 
-#endif // DISPLAY_CONFIG_H
+#endif // CALIBRATION_CONFIG_H

@@ -4,7 +4,7 @@
  * Module     : Statistics
  * File       : Statistics.cpp
  *
- * Version    : 0.3.0
+ * Version    : 1.0.0
  *
  ******************************************************************************/
 
@@ -42,7 +42,7 @@ bool Statistics::begin()
     Update
 =============================================================================*/
 
-void Statistics::update(Model& model)
+bool Statistics::update(Model& model)
 {
     MeasurementFrame& m = model.measurement();
 
@@ -59,7 +59,13 @@ void Statistics::update(Model& model)
     s.peak = calculatePeak(m.filtered);
 
     m.magnitude = calculateMagnitude(m.filtered);
+
+    s.rms = calculateRms(m.filtered);
+
+    return true;
 }
+
+
 
 /*=============================================================================
     Magnitude
@@ -119,4 +125,17 @@ float Statistics::calculateSampleRate(
         return 0.0f;
 
     return 1000.0f / dt;
+}
+
+/*=============================================================================
+    Calculate RMS
+=============================================================================*/
+
+float Statistics::calculateRms(
+    const Vector3f& value) const
+{
+    return sqrt(
+        (value.x * value.x +
+         value.y * value.y +
+         value.z * value.z) / 3.0f);
 }

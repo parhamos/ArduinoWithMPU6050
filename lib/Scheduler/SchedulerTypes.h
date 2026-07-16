@@ -2,34 +2,33 @@
  *
  * Project    : Robonix AccelMeter
  * Module     : Scheduler
- * File       : SchedulerPrivate.h
+ * File       : SchedulerTypes.h
  *
  * Version    : 2.0.0
  *
  * Description:
- *      Internal scheduler task objects.
+ *      Scheduler data types.
  *
  ******************************************************************************/
 
-#ifndef SCHEDULER_PRIVATE_H
-#define SCHEDULER_PRIVATE_H
+#ifndef SCHEDULER_TYPES_H
+#define SCHEDULER_TYPES_H
 
-#include "SchedulerTypes.h"
+#include <Arduino.h>
 
 /*=============================================================================
-    Internal Tasks
+    Task Object
 =============================================================================*/
 
-extern Task sensorTask;
+struct Task
+{
+    uint32_t period;
 
-extern Task calibrationTask;
+    uint32_t timer;
 
-extern Task filterTask;
+    uint32_t counter;
 
-extern Task statisticsTask;
+    bool enable;
+};
 
-extern Task displayTask;
-
-extern Task protocolTask;
-
-#endif // SCHEDULER_PRIVATE_H
+#endif // SCHEDULER_TYPES_H

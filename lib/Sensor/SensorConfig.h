@@ -4,8 +4,10 @@
  * Module     : Sensor
  * File       : SensorConfig.h
  *
- * Version    : 0.3.0
- *
+ * Version    : 1.0.0
+ * Description:
+    Configuration constants for the Sensor module.
+
  ******************************************************************************/
 
 #ifndef SENSOR_CONFIG_H
@@ -17,17 +19,15 @@
     Module Version
 =============================================================================*/
 
-constexpr uint8_t kSensorVersionMajor = 0;
-constexpr uint8_t kSensorVersionMinor = 3;
-constexpr uint8_t kSensorVersionPatch = 0;
-
+constexpr uint8_t kSensorVersionMajor = 1U;
+constexpr uint8_t kSensorVersionMinor = 0U;
+constexpr uint8_t kSensorVersionPatch = 0U;
 
 /*=============================================================================
     MPU6050 I2C Address
 =============================================================================*/
 
 constexpr uint8_t kMpu6050Address = 0x68;
-
 
 /*=============================================================================
     Accelerometer Range

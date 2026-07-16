@@ -39,6 +39,7 @@ Application::Application()
 /*=============================================================================
     Initialization
 =============================================================================*/
+
 bool Application::begin()
 {
     Serial.begin(115200);
@@ -52,15 +53,8 @@ bool Application::begin()
         return false;
 
     Serial.println("Calibration");
-
-    bool ok = calibration.begin();
-
-    Serial.println(ok);
-
-    if (!ok)
-    {
+    if (!calibration.begin())
         return false;
-    }
 
     Serial.println("Filter");
     if (!filter.begin())

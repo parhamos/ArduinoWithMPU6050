@@ -4,7 +4,7 @@
  * Module     : Model
  * File       : Model.cpp
  *
- * Version    : 0.2.1
+ * Version    : 1.0.0
  *
  * Description:
  *      Implementation of the central firmware data model.
@@ -70,6 +70,19 @@ void Model::reset()
 
     measurement_.frameNumber = 0UL;
 
+    configuration_.filterType = FilterType::IIR;
+
+    /*-----------------------------------------------------------------------
+        Calibration
+    -----------------------------------------------------------------------*/
+
+    calibration_.state = CalibrationState::NotCalibrated;
+
+    calibration_.offset.x = 0.0f;
+    calibration_.offset.y = 0.0f;
+    calibration_.offset.z = 0.0f;
+
+
     /*-----------------------------------------------------------------------
         Statistics
     -----------------------------------------------------------------------*/
@@ -81,16 +94,6 @@ void Model::reset()
     statistics_.mean = 0.0f;
 
     statistics_.sampleRate = kDefaultSampleRate;
-
-    /*-----------------------------------------------------------------------
-        Calibration
-    -----------------------------------------------------------------------*/
-
-    calibration_.state = CalibrationState::NotCalibrated;
-
-    calibration_.offset.x = 0.0f;
-    calibration_.offset.y = 0.0f;
-    calibration_.offset.z = 0.0f;
 
     /*-----------------------------------------------------------------------
         Configuration
