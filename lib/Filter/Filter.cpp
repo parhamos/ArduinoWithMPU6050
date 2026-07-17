@@ -145,8 +145,23 @@ void Filter::processIIR(Model& model)
     previousOutput_.z =
         kIirAlpha * m.calibrated.z +
         (1.0f - kIirAlpha) * previousOutput_.z;
-}
 
+    /*-------------------------------------------------------------
+        Store filtered values
+    -------------------------------------------------------------*/
+
+    m.filtered = previousOutput_;
+
+    /*-------------------------------------------------------------
+        Magnitude
+    -------------------------------------------------------------*/
+
+    m.magnitude =
+        sqrtf(
+            m.filtered.x * m.filtered.x +
+            m.filtered.y * m.filtered.y +
+            m.filtered.z * m.filtered.z);
+}
 /*=============================================================================
     Moving Average Filter
 =============================================================================*/

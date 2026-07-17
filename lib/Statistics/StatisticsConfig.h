@@ -4,74 +4,58 @@
  * Module     : Statistics
  * File       : StatisticsConfig.h
  *
- * Version    : 0.3.0
+ * Version    : 2.0.0
  *
  * Description:
- *      Global configuration for Statistics module.
+ *      Configuration constants for Statistics module.
  *
  ******************************************************************************/
 
-#ifndef STATISTICS_CONFIG_H
-#define STATISTICS_CONFIG_H
-
-#include <Arduino.h>
-
-/*=============================================================================
-    Module Version
-=============================================================================*/
-
-constexpr uint8_t kStatisticsVersionMajor = 0;
-constexpr uint8_t kStatisticsVersionMinor = 3;
-constexpr uint8_t kStatisticsVersionPatch = 0;
-
-/*=============================================================================
-    Magnitude
-=============================================================================*/
-
-constexpr bool kEnableMagnitude = true;
-
-/*=============================================================================
-    RMS
-=============================================================================*/
-
-constexpr bool kEnableRMS = true;
-
-/*
-    Number of samples used for RMS calculation.
-*/
-constexpr uint16_t kRmsWindowSize = 100;
-
-/*=============================================================================
-    Peak
-=============================================================================*/
-
-constexpr bool kEnablePeak = true;
-
-/*=============================================================================
-    Mean
-=============================================================================*/
-
-constexpr bool kEnableMean = true;
-
-/*=============================================================================
-    Sample Rate
-=============================================================================*/
-
-constexpr bool kEnableSampleRate = true;
-
-/*
-    Update period for sample-rate estimation.
-*/
-constexpr uint16_t kSampleRatePeriodMs = 1000;
-
-/*=============================================================================
-    Future Features
-=============================================================================*/
-
-constexpr bool kEnableFFT = false;
-constexpr bool kEnableTHD = false;
-constexpr bool kEnablePSD = false;
-constexpr bool kEnableKurtosis = false;
-constexpr bool kEnableSkewness = false;
-
-#endif
+ #ifndef STATISTICS_CONFIG_H
+ #define STATISTICS_CONFIG_H
+ 
+ #include <Arduino.h>
+ 
+ /*=============================================================================
+     Module Version
+ =============================================================================*/
+ 
+ constexpr uint8_t kStatisticsVersionMajor = 2U;
+ constexpr uint8_t kStatisticsVersionMinor = 0U;
+ constexpr uint8_t kStatisticsVersionPatch = 0U;
+ 
+ /*=============================================================================
+     Statistics Window
+ =============================================================================*/
+ 
+ constexpr uint16_t kStatisticsWindowSize = 100U;
+ 
+ /*=============================================================================
+     Enable Calculations
+ =============================================================================*/
+ 
+ constexpr bool kEnableMagnitude  = true;
+ constexpr bool kEnableMean       = true;
+ constexpr bool kEnableRms        = true;
+ constexpr bool kEnablePeak       = true;
+ constexpr bool kEnableSampleRate = true;
+ 
+ /*=============================================================================
+     Peak Detection
+ =============================================================================*/
+ 
+ constexpr bool kPeakUseAbsoluteValue = true;
+ 
+ /*=============================================================================
+     Magnitude
+ =============================================================================*/
+ 
+ constexpr bool kMagnitudeUseFilteredData = true;
+ 
+ /*=============================================================================
+     Runtime Update
+ =============================================================================*/
+ 
+ constexpr bool kContinuousUpdate = true;
+ 
+ #endif // STATISTICS_CONFIG_H

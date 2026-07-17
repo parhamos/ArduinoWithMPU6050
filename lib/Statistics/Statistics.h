@@ -4,51 +4,63 @@
  * Module     : Statistics
  * File       : Statistics.h
  *
- * Version    : 1.0.0
+ * Version    : 2.0.0
  *
  * Description:
- *      Statistical calculations for acceleration measurements.
+ *      Statistical processing module.
  *
  ******************************************************************************/
 
-#ifndef STATISTICS_H
-#define STATISTICS_H
-
-#include <Arduino.h>
-
-#include "Model.h"
-
-class Statistics
-{
-public:
-
-    Statistics();
-
-    bool begin();
-
-    bool update(Model& model);
-
-    /*======================================================================
-        Statistical Functions
-    ======================================================================*/
-
-    float calculateMagnitude(const Vector3f& value) const;
-
-    float calculateRms(const Vector3f& value) const;
-
-    float calculatePeak(const Vector3f& value) const;
-
-    float calculateMean(const Vector3f& value) const;
-
-    float calculateSampleRate(
-        uint32_t currentTime,
-        uint32_t previousTime) const;
-
-private:
-
-    uint32_t previousSampleTime_;
-};
-
-extern Statistics statistics;
-
-#endif // STATISTICS_H
+ #ifndef STATISTICS_H
+ #define STATISTICS_H
+ 
+ #include <Arduino.h>
+ 
+ #include "Model.h"
+ #include "StatisticsConfig.h"
+ #include "StatisticsPrivate.h"
+ 
+ /*=============================================================================
+     Statistics Module
+ =============================================================================*/
+ 
+ class Statistics
+ {
+ public:
+ 
+     Statistics();
+ 
+     bool begin();
+ 
+     bool update(Model& model);
+ 
+ private:
+ 
+     /*-----------------------------------------------------------------------
+         Processing
+     -----------------------------------------------------------------------*/
+ 
+     void updateMagnitude(Model& model);
+ 
+     void updateMean(Model& model);
+ 
+     void updateRms(Model& model);
+ 
+     void updatePeak(Model& model);
+ 
+     void updateSampleRate(Model& model);
+ 
+     /*-----------------------------------------------------------------------
+         Runtime
+     -----------------------------------------------------------------------*/
+ 
+     StatisticsRuntime runtime_;
+ };
+ 
+ /*=============================================================================
+     Global Instance
+ =============================================================================*/
+ 
+ extern Statistics statistics;
+ 
+ #endif // STATISTICS_H

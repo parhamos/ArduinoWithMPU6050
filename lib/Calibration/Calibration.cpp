@@ -4,52 +4,151 @@
  * Module     : Calibration
  * File       : Calibration.cpp
  *
- * Version    : 1.0.0
+ * Version    : 2.0.0
  *
  * Description:
- *      Zero-offset calibration implementation.
+ *      Sensor calibration module.
  *
  ******************************************************************************/
 
-#include "Calibration.h"
-#include "CalibrationConfig.h"
+ #include "Calibration.h"
 
-/*=============================================================================
-    Global Instance
+ /*=============================================================================
+     Global Instance
+ =============================================================================*/
+ 
+ Calibration calibration;
+ 
+ /*=============================================================================
+     Constructor
+ =============================================================================*/
+ 
+ Calibration::Calibration()
+ {
+ }
+ 
+ /*=============================================================================
+     Initialization
+ =============================================================================*/
+ 
+ bool Calibration::begin()
+ {
+     runtime_.calibrating = false;
+     runtime_.calibrated  = false;
+ 
+     runtime_.sampleCount = 0U;
+ 
+     runtime_.accumulator.x = 0.0f;
+     runtime_.accumulator.y = 0.0f;
+     runtime_.accumulator.z = 0.0f;
+ 
+     return true;
+ }
+ 
+ /*=============================================================================
+     Update
+ =============================================================================*/
+ 
+ bool Calibration::update(Model& model)
+ {
+     /*
+         Calibration in progress
+     */
+ 
+     if (runtime_.calibrating)
+     {
+         accumulateSamples(model);
+ 
+         if (runtime_.sampleCount >= kCalibrationSampleCount)
+         {
+             calculateOffset(model);
+ 
+             runtime_.calibrating = false;
+             runtime_.calibrated  = true;
+         }
+     }
+ 
+     /*
+         Always produce calibrated data.
+     */
+ 
+     applyCalibration(model);
+ 
+     return true;
+ }
+ /*=============================================================================
+    Accumulate Samples
 =============================================================================*/
 
-Calibration calibration;
-
-/*=============================================================================
-    Constructor
-=============================================================================*/
-
-Calibration::Calibration()
-    :
-    running_(false),
-    finished_(false),
-    sampleCount_(0U)
+void Calibration::accumulateSamples(Model& model)
 {
-    accumulator_.x = 0.0f;
-    accumulator_.y = 0.0f;
-    accumulator_.z = 0.0f;
+    const MeasurementFrame& m = model.measurement();
+
+    runtime_.accumulator.x += m.raw.x;
+    runtime_.accumulator.y += m.raw.y;
+    runtime_.accumulator.z += m.raw.z;
+
+    runtime_.sampleCount++;
 }
 
 /*=============================================================================
-    Initialization
+    Calculate Offset
 =============================================================================*/
 
-bool Calibration::begin()
+void Calibration::calculateOffset(Model& model)
 {
-    running_ = false;
-    finished_ = false;
-    sampleCount_ = 0U;
+    CalibrationData& calibration = model.calibration();
 
-    accumulator_.x = 0.0f;
-    accumulator_.y = 0.0f;
-    accumulator_.z = 0.0f;
+    calibration.offset.x =
+        runtime_.accumulator.x /
+        static_cast<float>(runtime_.sampleCount);
 
-    return true;
+    calibration.offset.y =
+        runtime_.accumulator.y /
+        static_cast<float>(runtime_.sampleCount);
+
+    calibration.offset.z =
+        runtime_.accumulator.z /
+        static_cast<float>(runtime_.sampleCount);
+
+    calibration.state = CalibrationState::Completed;
+
+    model.status().calibration =
+        CalibrationState::Completed;
+}
+/*=============================================================================
+    Apply Calibration
+=============================================================================*/
+
+void Calibration::applyCalibration(Model& model)
+{
+    //const MeasurementFrame& raw = model.measurement();
+    CalibrationData& calibration = model.calibration();
+    MeasurementFrame& measurement = model.measurement();
+
+    /*
+        If calibration has not been completed yet,
+        simply pass raw data to calibrated output.
+    */
+
+    if (!runtime_.calibrated)
+    {
+        measurement.calibrated = measurement.raw;
+        return;
+    }
+
+    /*
+        Apply offset compensation
+    */
+
+    measurement.calibrated.x =
+        measurement.raw.x - calibration.offset.x;
+
+    measurement.calibrated.y =
+        measurement.raw.y - calibration.offset.y;
+
+    measurement.calibrated.z =
+        measurement.raw.z - calibration.offset.z;
 }
 
 /*=============================================================================
@@ -58,76 +157,39 @@ bool Calibration::begin()
 
 bool Calibration::start()
 {
-    running_ = true;
-    finished_ = false;
-    sampleCount_ = 0U;
+    runtime_.calibrating = true;
+    runtime_.calibrated  = false;
 
-    accumulator_.x = 0.0f;
-    accumulator_.y = 0.0f;
-    accumulator_.z = 0.0f;
+    runtime_.sampleCount = 0U;
 
-    return true;
-}
-
-/*=============================================================================
-    Update
-=============================================================================*/
-
-bool Calibration::update(Model& model)
-{
-    if (!running_)
-    {
-        return false;
-    }
-
-    const Vector3f& raw = model.measurement().raw;
-
-    accumulator_.x += raw.x;
-    accumulator_.y += raw.y;
-    accumulator_.z += raw.z;
-
-    sampleCount_++;
-
-    if (sampleCount_ < kCalibrationSampleCount)
-    {
-        return false;
-    }
-
-    CalibrationData& calibrationData = model.calibration();
-
-    calibrationData.offset.x =
-        accumulator_.x / kCalibrationSampleCount;
-
-    calibrationData.offset.y =
-        accumulator_.y / kCalibrationSampleCount;
-
-    calibrationData.offset.z =
-        accumulator_.z / kCalibrationSampleCount;
-
-    calibrationData.state = CalibrationState::Completed;
-
-    model.status().calibration = CalibrationState::Completed;
-
-    running_ = false;
-    finished_ = true;
+    runtime_.accumulator.x = 0.0f;
+    runtime_.accumulator.y = 0.0f;
+    runtime_.accumulator.z = 0.0f;
 
     return true;
 }
 
 /*=============================================================================
-    Status
+    Reset Calibration
 =============================================================================*/
 
-bool Calibration::isRunning() const
+void Calibration::reset()
 {
-    return running_;
+    runtime_.calibrating = false;
+    runtime_.calibrated  = false;
+
+    runtime_.sampleCount = 0U;
+
+    runtime_.accumulator.x = 0.0f;
+    runtime_.accumulator.y = 0.0f;
+    runtime_.accumulator.z = 0.0f;
 }
 
 /*=============================================================================
-    Status
+    Calibration Status
 =============================================================================*/
 
-bool Calibration::isFinished() const
+bool Calibration::isCalibrated() const
 {
-    return finished_;
+    return runtime_.calibrated;
 }

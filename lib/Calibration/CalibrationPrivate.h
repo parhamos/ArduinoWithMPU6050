@@ -1,73 +1,63 @@
 /******************************************************************************
  *
  * Project    : Robonix AccelMeter
- * Module     : Statistics
- * File       : StatisticsPrivate.h
+ * Module     : Calibration
+ * File       : CalibrationPrivate.h
  *
  * Version    : 2.0.0
  *
  * Description:
- *      Private runtime objects for Statistics module.
+ *      Private runtime objects for Calibration module.
  *
  ******************************************************************************/
 
- #ifndef STATISTICS_PRIVATE_H
- #define STATISTICS_PRIVATE_H
+ #ifndef CALIBRATION_PRIVATE_H
+ #define CALIBRATION_PRIVATE_H
  
  #include <Arduino.h>
+ 
+ #include "Model.h"
  
  /*=============================================================================
      Runtime Data
  =============================================================================*/
  
- struct StatisticsRuntime
+ struct CalibrationRuntime
  {
      /*---------------------------------------------------------------------
-         Mean
+         Calibration Status
      ---------------------------------------------------------------------*/
  
-     float sum;
+     bool calibrating;
+ 
+     bool calibrated;
  
      /*---------------------------------------------------------------------
-         RMS
-     ---------------------------------------------------------------------*/
- 
-     float squareSum;
- 
-     /*---------------------------------------------------------------------
-         Peak Detection
-     ---------------------------------------------------------------------*/
- 
-     float peak;
- 
-     /*---------------------------------------------------------------------
-         Window Counter
+         Sample Counter
      ---------------------------------------------------------------------*/
  
      uint16_t sampleCount;
  
      /*---------------------------------------------------------------------
-         Sample Rate
+         Accumulator
      ---------------------------------------------------------------------*/
  
-     uint32_t previousTimestamp;
- 
-     float sampleRate;
+     Vector3f accumulator;
  
      /*---------------------------------------------------------------------
          Constructor
      ---------------------------------------------------------------------*/
  
-     StatisticsRuntime()
+     CalibrationRuntime()
          :
-         sum(0.0f),
-         squareSum(0.0f),
-         peak(0.0f),
-         sampleCount(0U),
-         previousTimestamp(0UL),
-         sampleRate(0.0f)
+         calibrating(false),
+         calibrated(false),
+         sampleCount(0U)
      {
+         accumulator.x = 0.0f;
+         accumulator.y = 0.0f;
+         accumulator.z = 0.0f;
      }
  };
  
- #endif // STATISTICS_PRIVATE_H
+ #endif // CALIBRATION_PRIVATE_H

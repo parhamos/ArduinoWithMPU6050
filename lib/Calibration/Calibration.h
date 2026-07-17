@@ -4,47 +4,63 @@
  * Module     : Calibration
  * File       : Calibration.h
  *
- * Version    : 1.0.0
+ * Version    : 2.0.0
  *
  * Description:
- *      Zero-offset calibration module.
+ *      Sensor calibration module.
  *
  ******************************************************************************/
 
-#ifndef CALIBRATION_H
-#define CALIBRATION_H
-
-#include <Arduino.h>
-
-#include "Model.h"
-
-class Calibration
-{
-public:
-
-    Calibration();
-
-    bool begin();
-
-    bool start();
-
-    bool update(Model& model);
-
-    bool isRunning() const;
-
-    bool isFinished() const;
-
-private:
-
-    bool running_;
-
-    bool finished_;
-
-    uint16_t sampleCount_;
-
-    Vector3f accumulator_;
-};
-
-extern Calibration calibration;
-
-#endif // CALIBRATION_H
+ #ifndef CALIBRATION_H
+ #define CALIBRATION_H
+ 
+ #include <Arduino.h>
+ 
+ #include "Model.h"
+ #include "CalibrationConfig.h"
+ #include "CalibrationPrivate.h"
+ 
+ /*=============================================================================
+     Calibration Module
+ =============================================================================*/
+ 
+ class Calibration
+ {
+ public:
+ 
+     Calibration();
+ 
+     bool begin();
+ 
+     bool update(Model& model);
+ 
+     bool start();
+ 
+     void reset();
+ 
+     bool isCalibrated() const;
+ 
+ private:
+ 
+     /*-----------------------------------------------------------------------
+         Internal Processing
+     -----------------------------------------------------------------------*/
+ 
+     void accumulateSamples(Model& model);
+ 
+     void calculateOffset(Model& model);
+ 
+     void applyCalibration(Model& model);
+ 
+ private:
+ 
+     CalibrationRuntime runtime_;
+ };
+ 
+ /*=============================================================================
+     Global Instance
+ =============================================================================*/
+ 
+ extern Calibration calibration;
+ 
+ #endif // CALIBRATION_H

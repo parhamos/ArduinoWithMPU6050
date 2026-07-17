@@ -4,94 +4,74 @@
  * Module     : Display
  * File       : Display.cpp
  *
- * Version    : 1.0.0
- *
- * Description:
- *      LCD display management module.
+ * Version    : 2.0.0
  *
  ******************************************************************************/
 
-#include "Display.h"
-#include "DisplayConfig.h"
-#include "Config.h"
+ #include "Display.h"
 
-#include <LiquidCrystal_I2C.h>
-
-/*=============================================================================
-    Private Objects
-=============================================================================*/
-
-LiquidCrystal_I2C lcd(
-    LCD_ADDRESS,
-    LCD_COLS,
-    LCD_ROWS);
-
-/*=============================================================================
-    Global Instance
-=============================================================================*/
-
-Display display;
-
-/*=============================================================================
-    Constructor
-=============================================================================*/
-
-Display::Display()
-{
-}
-
-/*=============================================================================
-    Initialization
-=============================================================================*/
-
-bool Display::begin()
-{
-    lcd.init();
-    lcd.backlight();
-
-    return true;
-}
-
-/*=============================================================================
-    Splash Screen
-=============================================================================*/
-
-void Display::splash()
-{
-    lcd.clear();
-
-    lcd.setCursor(0, 0);
-    lcd.print(PROJECT_NAME);
-
-    lcd.setCursor(0, 1);
-    lcd.print("Version ");
-    lcd.print(PROJECT_VERSION);
-}
-
-/*=============================================================================
-    Update Display
-=============================================================================*/
-
-bool Display::update(Model& model)
-{
-    (void)model;
-
-    /*
-        Display pages will be implemented
-        in the next development phase.
-    */
-
-    return true;
-}
-
-/*=============================================================================
-    Show Error
-=============================================================================*/
-
-void Display::showError(const char* message)
-{
-    lcd.clear();
-
-    lcd.setCursor(0, 0);
-    lcd.print(message);
-}
+ #include <stdio.h>
+ #include <string.h>
+ 
+ /*=============================================================================
+     Global Instance
+ =============================================================================*/
+ 
+ Display display;
+ 
+ /*=============================================================================
+     Constructor
+ =============================================================================*/
+ 
+ Display::Display()
+     :
+     lcd_(kLcdAddress,
+          kLcdColumns,
+          kLcdRows)
+ {
+     runtime_.initialized   = false;
+     runtime_.autoPageEnabled = kAutoPageEnabled;
+     runtime_.currentPage   = DisplayPage::Acceleration;
+ 
+     runtime_.lastRefresh   = 0U;
+     runtime_.lastPageChange = 0U;
+ 
+     clearCache();
+ }
+ 
+ /*=============================================================================
+     Initialization
+ =============================================================================*/
+ 
+ bool Display::begin()
+ {
+     lcd_.init();
+ 
+     lcd_.backlight();
+ 
+     lcd_.clear();
+ 
+     runtime_.initialized = true;
+ 
+     runtime_.lastRefresh = millis();
+ 
+     runtime_.lastPageChange = millis();
+ 
+     return true;
+ }
+ 
+ /*=============================================================================
+     Update
+ =============================================================================*/
+ 
+ bool Display::update(Model& model)
+ {
+     if (!runtime_.initialized)
+     {
+         return false;
+     }
+ 
+     refresh(model);
+ 
+     return true;
+ }

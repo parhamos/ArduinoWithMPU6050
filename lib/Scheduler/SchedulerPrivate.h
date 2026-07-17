@@ -11,25 +11,25 @@
  *
  ******************************************************************************/
 
-#ifndef SCHEDULER_PRIVATE_H
-#define SCHEDULER_PRIVATE_H
-
-#include "SchedulerTypes.h"
-
-/*=============================================================================
-    Internal Tasks
-=============================================================================*/
-
-extern Task sensorTask;
-
-extern Task calibrationTask;
-
-extern Task filterTask;
-
-extern Task statisticsTask;
-
-extern Task displayTask;
-
-extern Task protocolTask;
-
-#endif // SCHEDULER_PRIVATE_H
+ #ifndef SCHEDULER_PRIVATE_H
+ #define SCHEDULER_PRIVATE_H
+ 
+ #include "SchedulerTypes.h"
+ 
+ /*=============================================================================
+     Internal Tasks
+ =============================================================================*/
+ 
+ extern Task sensorTask;
+ 
+ extern Task calibrationTask;
+ 
+ extern Task filterTask;
+ 
+ extern Task statisticsTask;
+ 
+ extern Task displayTask;
+ 
+ extern Task protocolTask;
+ 
+ #endif // SCHEDULER_PRIVATE_H

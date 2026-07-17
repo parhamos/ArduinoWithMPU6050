@@ -4,138 +4,203 @@
  * Module     : Statistics
  * File       : Statistics.cpp
  *
- * Version    : 1.0.0
+ * Version    : 2.0.0
+ *
+ * Description:
+ *      Statistical processing module.
  *
  ******************************************************************************/
 
-#include "Statistics.h"
+ #include "Statistics.h"
 
-#include <math.h>
-
-/*=============================================================================
-    Global Instance
-=============================================================================*/
-
-Statistics statistics;
-
-/*=============================================================================
-    Constructor
-=============================================================================*/
-
-Statistics::Statistics()
-{
-    previousSampleTime_ = 0UL;
-}
-
-/*=============================================================================
-    Initialization
-=============================================================================*/
-
-bool Statistics::begin()
-{
-    previousSampleTime_ = millis();
-
-    return true;
-}
-
-/*=============================================================================
-    Update
-=============================================================================*/
-
-bool Statistics::update(Model& model)
-{
-    MeasurementFrame& m = model.measurement();
-
-    StatisticsData& s = model.statistics();
-
-    s.sampleRate = calculateSampleRate(
-        m.timestamp,
-        previousSampleTime_);
-
-    previousSampleTime_ = m.timestamp;
-
-    s.mean = calculateMean(m.filtered);
-
-    s.peak = calculatePeak(m.filtered);
-
-    m.magnitude = calculateMagnitude(m.filtered);
-
-    s.rms = calculateRms(m.filtered);
-
-    return true;
-}
-
-
-
-/*=============================================================================
+ #include <math.h>
+ 
+ /*=============================================================================
+     Global Instance
+ =============================================================================*/
+ 
+ Statistics statistics;
+ 
+ /*=============================================================================
+     Constructor
+ =============================================================================*/
+ 
+ Statistics::Statistics()
+ {
+ }
+ 
+ /*=============================================================================
+     Initialization
+ =============================================================================*/
+ 
+ bool Statistics::begin()
+ {
+     runtime_.sum               = 0.0f;
+     runtime_.squareSum         = 0.0f;
+     runtime_.peak              = 0.0f;
+ 
+     runtime_.sampleCount       = 0U;
+ 
+     runtime_.previousTimestamp = millis();
+     runtime_.sampleRate        = 0.0f;
+ 
+     return true;
+ }
+ 
+ /*=============================================================================
+     Update
+ =============================================================================*/
+ 
+ bool Statistics::update(Model& model)
+ {
+ #if (1)
+ 
+     if (kEnableMagnitude)
+     {
+         updateMagnitude(model);
+     }
+ 
+     if (kEnableMean)
+     {
+         updateMean(model);
+     }
+ 
+     if (kEnableRms)
+     {
+         updateRms(model);
+     }
+ 
+     if (kEnablePeak)
+     {
+         updatePeak(model);
+     }
+ 
+     if (kEnableSampleRate)
+     {
+         updateSampleRate(model);
+     }
+ 
+ #endif
+ 
+     return true;
+ }
+ /*=============================================================================
     Magnitude
 =============================================================================*/
 
-float Statistics::calculateMagnitude(
-    const Vector3f& value) const
+void Statistics::updateMagnitude(Model& model)
 {
-    return sqrt(
-        value.x * value.x +
-        value.y * value.y +
-        value.z * value.z);
-}
+    MeasurementFrame& m = model.measurement();
 
-/*=============================================================================
-    Peak
-=============================================================================*/
+    const Vector3f* source;
 
-float Statistics::calculatePeak(
-    const Vector3f& value) const
-{
-    float peak = fabs(value.x);
+    if (kMagnitudeUseFilteredData)
+    {
+        source = &m.filtered;
+    }
+    else
+    {
+        source = &m.calibrated;
+    }
 
-    if (fabs(value.y) > peak)
-        peak = fabs(value.y);
-
-    if (fabs(value.z) > peak)
-        peak = fabs(value.z);
-
-    return peak;
+    m.magnitude =
+        sqrtf(
+            source->x * source->x +
+            source->y * source->y +
+            source->z * source->z);
 }
 
 /*=============================================================================
     Mean
 =============================================================================*/
 
-float Statistics::calculateMean(
-    const Vector3f& value) const
+void Statistics::updateMean(Model& model)
 {
-    return
-        (value.x +
-         value.y +
-         value.z) / 3.0f;
+    StatisticsData& statistics = model.statistics();
+
+    runtime_.sum += model.measurement().magnitude;
+
+    runtime_.sampleCount++;
+
+    if (runtime_.sampleCount == 0U)
+    {
+        return;
+    }
+
+    statistics.mean =
+        runtime_.sum /
+        static_cast<float>(runtime_.sampleCount);
+}
+
+/*=============================================================================
+    Peak
+=============================================================================*/
+
+void Statistics::updatePeak(Model& model)
+{
+    StatisticsData& statistics = model.statistics();
+
+    float value = model.measurement().magnitude;
+
+    if (kPeakUseAbsoluteValue)
+    {
+        value = fabsf(value);
+    }
+
+    if (value > runtime_.peak)
+    {
+        runtime_.peak = value;
+    }
+
+    statistics.peak = runtime_.peak;
+}
+/*=============================================================================
+    RMS
+=============================================================================*/
+
+void Statistics::updateRms(Model& model)
+{
+    StatisticsData& statistics = model.statistics();
+
+    const float value = model.measurement().magnitude;
+
+    runtime_.squareSum += value * value;
+
+    if (runtime_.sampleCount == 0U)
+    {
+        statistics.rms = 0.0f;
+        return;
+    }
+
+    statistics.rms =
+        sqrtf(
+            runtime_.squareSum /
+            static_cast<float>(runtime_.sampleCount));
 }
 
 /*=============================================================================
     Sample Rate
 =============================================================================*/
 
-float Statistics::calculateSampleRate(
-    uint32_t currentTime,
-    uint32_t previousTime) const
+void Statistics::updateSampleRate(Model& model)
 {
-    uint32_t dt = currentTime - previousTime;
+    StatisticsData& statistics = model.statistics();
 
-    if (dt == 0UL)
-        return 0.0f;
+    const uint32_t now = millis();
 
-    return 1000.0f / dt;
-}
+    const uint32_t dt = now - runtime_.previousTimestamp;
 
-/*=============================================================================
-    Calculate RMS
-=============================================================================*/
+    runtime_.previousTimestamp = now;
 
-float Statistics::calculateRms(
-    const Vector3f& value) const
-{
-    return sqrt(
-        (value.x * value.x +
-         value.y * value.y +
-         value.z * value.z) / 3.0f);
+    if (dt == 0U)
+    {
+        return;
+    }
+
+    runtime_.sampleRate =
+        1000.0f /
+        static_cast<float>(dt);
+
+    statistics.sampleRate =
+        runtime_.sampleRate;
 }

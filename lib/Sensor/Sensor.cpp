@@ -134,61 +134,50 @@ Sensor::Sensor()
 
 bool Sensor::begin()
 {
+    Serial.println("S1");
+
     connected_ = false;
 
-    /*
-        Initialize I2C
-    */
+    Serial.println("S2");
 
     Wire.begin();
 
-    /*
-        Initialize MPU6050
-    */
+    Serial.println("S3");
 
     if (!mpu.begin(kMpu6050Address))
     {
+        Serial.println("MPU FAIL");
         return false;
     }
 
-    /*
-        Configure Accelerometer
-    */
+    Serial.println("S4");
 
     mpu.setAccelerometerRange(
-        convertAccelRange(
-            kDefaultAccelerometerRange));
+        convertAccelRange(kDefaultAccelerometerRange));
 
-    /*
-        Configure Gyroscope
-    */
+    Serial.println("S5");
 
     mpu.setGyroRange(
-        convertGyroRange(
-            kDefaultGyroscopeRange));
+        convertGyroRange(kDefaultGyroscopeRange));
 
-    /*
-        Configure Digital Low Pass Filter
-    */
+    Serial.println("S6");
 
     if (kEnableInternalFilter)
     {
         mpu.setFilterBandwidth(
-            convertFilterBandwidth(
-                kDefaultFilterBandwidth));
+            convertFilterBandwidth(kDefaultFilterBandwidth));
     }
 
-    /*
-        Reset Runtime Data
-    */
+    Serial.println("S7");
 
     temperature_ = 0.0f;
     sampleRate_ = kDefaultSampleRate;
     connected_ = true;
 
+    Serial.println("S8");
+
     return true;
 }
-
 /*=============================================================================
     Update Sensor Data
 =============================================================================*/
