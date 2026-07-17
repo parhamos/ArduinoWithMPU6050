@@ -43,42 +43,36 @@
  =============================================================================*/
  
  bool Display::begin()
- {
-    Serial.println("D1");
+{
+    int status =
+        lcd_.begin(kLcdColumns,
+                   kLcdRows);
 
-    lcd_.init();
-    
-    Serial.println("D2");
-    
+    if(status)
+    {
+        return false;
+    }
+
     lcd_.backlight();
-    
-    Serial.println("D3");
-    
+
     lcd_.clear();
-    
-    Serial.println("D4");
-    
+
     runtime_.initialized = true;
-    
-    Serial.println("D5");
-    
+
     lcd_.setCursor(0,0);
     lcd_.print(" Robonix ");
-    
-    Serial.println("D6");
-    
+
     lcd_.setCursor(0,1);
     lcd_.print("AccelMeter");
-    
-    Serial.println("D7");
-    
+
     delay(1000);
-    
-    Serial.println("D8");
-    
+
     lcd_.clear();
 
+    clearCache();
 
+    return true;
+}
 // while(1)
 // {
 //     lcd_.setCursor(0,0);
@@ -93,10 +87,10 @@
 
 //     delay(1000);
 // }
-    Serial.println("D9");
+//     Serial.println("D9");
     
-    return true;
- }
+//     return true;
+//  }
  
  /*=============================================================================
      Update

@@ -15,8 +15,8 @@
  #define DISPLAY_H
  
  #include <Arduino.h>
- #include <LiquidCrystal_I2C.h>
- 
+ #include <hd44780.h>
+ #include <hd44780ioClass/hd44780_I2Cexp.h> 
  #include "Model.h"
  #include "DisplayPrivate.h"
  
@@ -54,8 +54,7 @@
          LCD
      */
  
-     LiquidCrystal_I2C lcd_;
- 
+     hd44780_I2Cexp lcd_; 
      /*
          Cache
      */
