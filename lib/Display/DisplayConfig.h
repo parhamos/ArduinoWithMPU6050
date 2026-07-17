@@ -4,7 +4,10 @@
  * Module     : Display
  * File       : DisplayConfig.h
  *
- * Version    : 2.0.0
+ * Version    : 1.0.0
+ *
+ * Description:
+ *      Configuration constants for Display module.
  *
  ******************************************************************************/
 
@@ -14,6 +17,14 @@
  #include <Arduino.h>
  
  /*=============================================================================
+     Module Version
+ =============================================================================*/
+ 
+ constexpr uint8_t kDisplayVersionMajor = 1U;
+ constexpr uint8_t kDisplayVersionMinor = 0U;
+ constexpr uint8_t kDisplayVersionPatch = 0U;
+ 
+ /*=============================================================================
      LCD Configuration
  =============================================================================*/
  
@@ -21,30 +32,22 @@
  
  constexpr uint8_t kLcdColumns = 16U;
  
- constexpr uint8_t kLcdRows = 2U;
+ constexpr uint8_t kLcdRows = 4U;
  
  /*=============================================================================
-     Update Rate
+     Display Refresh
  =============================================================================*/
  
  constexpr uint16_t kDisplayRefreshPeriod = 100U;
+ 
+ 
  
  /*=============================================================================
      Formatting
  =============================================================================*/
  
- constexpr uint8_t kAccelerationDigits = 2U;
+ constexpr uint8_t kFloatPrecision = 2U;
  
- constexpr uint8_t kMagnitudeDigits = 2U;
+ constexpr bool kAutoClearUnusedCharacters = true;
  
- constexpr uint8_t kStatisticsDigits = 2U;
- 
- /*=============================================================================
-     Auto Page Change
- =============================================================================*/
- 
- constexpr bool kAutoPageEnabled = false;
- 
- constexpr uint32_t kAutoPagePeriod = 3000UL;
- 
- #endif
+ #endif // DISPLAY_CONFIG_H

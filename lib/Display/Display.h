@@ -4,10 +4,10 @@
  * Module     : Display
  * File       : Display.h
  *
- * Version    : 2.0.0
+ * Version    : 1.0.0
  *
  * Description:
- *      LCD Display module interface.
+ *      LCD Display module.
  *
  ******************************************************************************/
 
@@ -34,57 +34,69 @@
  
      bool update(Model& model);
  
- private:
- 
-     /*---------------------------------------------------------------------
-         Runtime
-     ---------------------------------------------------------------------*/
- 
-     DisplayRuntime runtime_;
- 
-     DisplayCache cache_;
- 
-     LiquidCrystal_I2C lcd_;
- 
-     /*---------------------------------------------------------------------
-         Main Functions
-     ---------------------------------------------------------------------*/
- 
-     void refresh(Model& model);
- 
-     /*---------------------------------------------------------------------
-         Page Control
-     ---------------------------------------------------------------------*/
- 
      void nextPage();
  
      void previousPage();
  
-     /*---------------------------------------------------------------------
-         Page Renderers
-     ---------------------------------------------------------------------*/
+     DisplayPage currentPage() const;
  
-     void showAcceleration(const Model& model);
+     void setPage(DisplayPage page);
  
-     void showMagnitude(const Model& model);
+ private:
  
-     void showStatistics(const Model& model);
+     /*
+         Runtime
+     */
  
-     /*---------------------------------------------------------------------
+     DisplayRuntime runtime_;
+ 
+     /*
+         LCD
+     */
+ 
+     LiquidCrystal_I2C lcd_;
+ 
+     /*
+         Cache
+     */
+ 
+     DisplayCache cache_;
+ 
+     /*
+         Main Refresh
+     */
+ 
+     void refresh(Model& model);
+ 
+     /*
+         Individual Pages
+     */
+ 
+     void pageAcceleration(const Model& model);
+ 
+     void pageMagnitude(const Model& model);
+ 
+     void pageStatistics(const Model& model);
+ 
+     void pageStatus(const Model& model);
+ 
+     /*
          LCD Helpers
-     ---------------------------------------------------------------------*/
+     */
  
      void clearCache();
  
-     void updateLine(
-         uint8_t row,
-         const char* text);
+     void printLine(uint8_t row,
+                    const char* text);
  
-     void writeCache();
+     void printValue(uint8_t row,
+                     const char* label,
+                     float value,
+                     uint8_t precision = 2);
  
-     bool lineChanged(
-         const char* source,
-         const char* destination) const;
+     void printStatus(uint8_t row,
+                      const char* label,
+                      const char* value);
  };
  
  /*=============================================================================

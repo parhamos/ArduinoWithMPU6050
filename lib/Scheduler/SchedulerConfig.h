@@ -37,5 +37,7 @@
  constexpr uint16_t kDisplayPeriod       = 100U;  // 10 Hz
  
  constexpr uint16_t kProtocolPeriod      = 50U;   // 20 Hz
+
+ constexpr uint16_t kButtonsPeriod       = 10U;
  
  #endif // SCHEDULER_CONFIG_H

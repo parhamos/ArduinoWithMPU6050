@@ -15,7 +15,7 @@
 
 #include "SchedulerConfig.h"
 #include "SchedulerPrivate.h"
-
+#include "Buttons.h"
 #include "Model.h"
 #include "Sensor.h"
 #include "Calibration.h"
@@ -40,7 +40,7 @@ Task filterTask;
 Task statisticsTask;
 Task displayTask;
 Task protocolTask;
-
+Task buttonsTask;
 /*=============================================================================
     Constructor
 =============================================================================*/
@@ -102,6 +102,14 @@ bool Scheduler::begin()
     protocolTask =
     {
         kProtocolPeriod,
+        0U,
+        0U,
+        true
+    };
+
+    buttonsTask   =
+    {
+        kButtonsPeriod,
         0U,
         0U,
         true
@@ -177,12 +185,26 @@ void Scheduler::run()
     }
 
     /*
+        Buttons
+    */
+
+
+    /*
         Display
     */
 
     if (run(displayTask))
     {
         display.update(model);
+    }
+
+    /*
+    Buttons
+*/
+
+    if (run(buttonsTask))
+    {
+        buttons.update();
     }
 
     /*

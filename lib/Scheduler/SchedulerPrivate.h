@@ -31,5 +31,7 @@
  extern Task displayTask;
  
  extern Task protocolTask;
+
+ extern Task buttonsTask;
  
  #endif // SCHEDULER_PRIVATE_H

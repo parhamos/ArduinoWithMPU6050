@@ -12,7 +12,7 @@
  ******************************************************************************/
 
 #include "Application.h"
-
+#include "Buttons.h"
 #include "Model.h"
 #include "Sensor.h"
 #include "Calibration.h"
@@ -64,6 +64,13 @@ bool Application::begin()
     if (!statistics.begin())
         return false;
 
+    Serial.println("Buttons");
+
+    if(!buttons.begin())
+    {
+        return false;
+    }
+        
     Serial.println("Display");
     if (!display.begin())
         return false;

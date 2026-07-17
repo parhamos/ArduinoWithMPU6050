@@ -1,43 +1,34 @@
 /******************************************************************************
  *
  * Project    : Robonix AccelMeter
- * Module     : Display
- * File       : DisplayPrivate.h
+ * Module     : Buttons
+ * File       : ButtonsConfig.h
  *
  * Version    : 1.0.0
  *
- * Description:
- *      Private objects for Display module.
- *
  ******************************************************************************/
 
- #ifndef DISPLAY_PRIVATE_H
- #define DISPLAY_PRIVATE_H
+ #ifndef BUTTONS_CONFIG_H
+ #define BUTTONS_CONFIG_H
  
  #include <Arduino.h>
  
- #include "DisplayConfig.h"
- 
  /*=============================================================================
-     LCD Cache
+     Hardware
  =============================================================================*/
  
- struct DisplayCache
- {
-     char line[4][kLcdColumns + 1];
- };
+ constexpr uint8_t kButtonNextPin = 2;
+ 
+ constexpr uint8_t kButtonPreviousPin = 3;
+ 
+ constexpr uint8_t kButtonOkPin = 4;
  
  /*=============================================================================
-     Display Runtime
+     Logic
  =============================================================================*/
  
- struct DisplayRuntime
- {
-     DisplayPage currentPage;
+ constexpr bool kButtonActiveLevel = LOW;
  
-     bool initialized;
+ constexpr uint16_t kDebounceTime = 30U;
  
-     uint32_t refreshCounter;
- };
- 
- #endif // DISPLAY_PRIVATE_H
+ #endif

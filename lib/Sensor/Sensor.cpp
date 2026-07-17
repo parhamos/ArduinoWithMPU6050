@@ -175,7 +175,7 @@ bool Sensor::begin()
     connected_ = true;
 
     Serial.println("S8");
-
+    model.status().sensor = SensorState::Ready;
     return true;
 }
 /*=============================================================================
