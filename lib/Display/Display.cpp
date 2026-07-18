@@ -60,7 +60,7 @@
     runtime_.initialized = true;
 
     lcd_.setCursor(0,0);
-    lcd_.print(" Robonix ");
+    lcd_.print(" Safe Co ");
 
     lcd_.setCursor(0,1);
     lcd_.print("AccelMeter");

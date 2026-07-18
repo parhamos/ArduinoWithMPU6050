@@ -107,7 +107,8 @@ void Statistics::updateMagnitude(Model& model)
         sqrtf(
             source->x * source->x +
             source->y * source->y +
-            source->z * source->z);
+            source->z * source->z );
+    m.magnitude =m.magnitude-9.81f;
 }
 
 /*=============================================================================
@@ -141,6 +142,7 @@ void Statistics::updatePeak(Model& model)
     StatisticsData& statistics = model.statistics();
 
     float value = model.measurement().magnitude;
+    
 
     if (kPeakUseAbsoluteValue)
     {
@@ -152,7 +154,7 @@ void Statistics::updatePeak(Model& model)
         runtime_.peak = value;
     }
 
-    statistics.peak = runtime_.peak;
+    statistics.peak = runtime_.peak - 9.81f;
 }
 /*=============================================================================
     RMS
@@ -165,6 +167,8 @@ void Statistics::updateRms(Model& model)
     const float value = model.measurement().magnitude;
 
     runtime_.squareSum += value * value;
+
+    
 
     if (runtime_.sampleCount == 0U)
     {
