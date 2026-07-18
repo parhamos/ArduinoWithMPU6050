@@ -1,41 +1,48 @@
+/******************************************************************************
+ *
+ * Project    : Robonix AccelMeter
+ * Module     : Sensor
+ * File       : Sensor.h
+ *
+ * Version    : 1.0.0
+ *
+ * Description:
+ *        MPU6050 sensor interface.
+ *
+ ******************************************************************************/
+
 #ifndef SENSOR_H
 #define SENSOR_H
 
 #include <Arduino.h>
 
+#include "Model.h"
+
 class Sensor
 {
-
 public:
+
+    Sensor();
 
     bool begin();
 
-    bool update();
+    bool update(Model& model);
 
-    bool connected();
+    bool isConnected() const;
 
-    float ax();
+    float temperature() const;
 
-    float ay();
-
-    float az();
-
-    float temperature();
+    uint16_t sampleRate() const;
 
 private:
 
-    float m_ax = 0.0f;
+    bool connected_;
 
-    float m_ay = 0.0f;
+    float temperature_;
 
-    float m_az = 0.0f;
-
-    float m_temp = 0.0f;
-
-    bool m_connected = false;
-
+    uint16_t sampleRate_;
 };
 
 extern Sensor sensor;
 
-#endif
+#endif // SENSOR_H

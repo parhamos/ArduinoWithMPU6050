@@ -1,33 +1,90 @@
+/******************************************************************************
+ *
+ * Project    : Robonix AccelMeter
+ * Module     : Sensor
+ * File       : SensorConfig.h
+ *
+ * Version    : 1.0.0
+ * Description:
+    Configuration constants for the Sensor module.
+
+ ******************************************************************************/
+
 #ifndef SENSOR_CONFIG_H
 #define SENSOR_CONFIG_H
 
 #include <Arduino.h>
-#include <Adafruit_MPU6050.h>
 
-/**************************************************
- * MPU6050 Configuration
- **************************************************/
+/*=============================================================================
+    Module Version
+=============================================================================*/
 
-constexpr auto ACC_RANGE =
-MPU6050_RANGE_8_G;
+constexpr uint8_t kSensorVersionMajor = 1U;
+constexpr uint8_t kSensorVersionMinor = 0U;
+constexpr uint8_t kSensorVersionPatch = 0U;
 
-constexpr auto GYRO_RANGE =
-MPU6050_RANGE_500_DEG;
+/*=============================================================================
+    MPU6050 I2C Address
+=============================================================================*/
 
-constexpr auto FILTER_BAND =
-MPU6050_BAND_21_HZ;
+constexpr uint8_t kMpu6050Address = 0x68;
 
-/**************************************************
- * Sample Rate
- **************************************************/
+/*=============================================================================
+    Accelerometer Range
+=============================================================================*/
 
-constexpr uint16_t SENSOR_RATE_HZ = 100;
+enum class AccelerometerRange : uint8_t
+{
+    Range2G = 0,
+    Range4G,
+    Range8G,
+    Range16G
+};
 
-#endif
+constexpr AccelerometerRange kDefaultAccelerometerRange =
+    AccelerometerRange::Range2G;
 
 
-//#include <Adafruit_MPU6050.h>
+/*=============================================================================
+    Gyroscope Range
+=============================================================================*/
 
-//constexpr auto ACC_RANGE  = MPU6050_RANGE_8_G;
-//constexpr auto GYRO_RANGE = MPU6050_RANGE_500_DEG;
-//constexpr auto DLPF_BW    = MPU6050_BAND_21_HZ;
+enum class GyroscopeRange : uint8_t
+{
+    Range250DPS = 0,
+    Range500DPS,
+    Range1000DPS,
+    Range2000DPS
+};
+
+constexpr GyroscopeRange kDefaultGyroscopeRange =
+    GyroscopeRange::Range250DPS;
+
+
+/*=============================================================================
+    Digital Low Pass Filter
+=============================================================================*/
+
+enum class FilterBandwidth : uint8_t
+{
+    Hz260 = 0,
+    Hz184,
+    Hz94,
+    Hz44,
+    Hz21,
+    Hz10,
+    Hz5
+};
+
+constexpr FilterBandwidth kDefaultFilterBandwidth =
+    FilterBandwidth::Hz44;
+
+
+/*=============================================================================
+    Features
+=============================================================================*/
+
+constexpr bool kEnableInternalFilter = true;
+
+
+#endif // SENSOR_CONFIG_H

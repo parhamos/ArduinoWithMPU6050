@@ -1,8 +1,14 @@
 /******************************************************************************
- * Project : AccelMeter
- * Module  : Scheduler
- * File    : Scheduler.h
- * Version : 2.0.0
+ *
+ * Project    : Robonix AccelMeter
+ * Module     : Scheduler
+ * File       : Scheduler.h
+ *
+ * Version    : 3.0.0
+ *
+ * Description:
+ *      Deterministic cyclic scheduler.
+ *
  ******************************************************************************/
 
 #ifndef SCHEDULER_H
@@ -10,38 +16,28 @@
 
 #include <Arduino.h>
 
-/**************************************************
- * Task
- **************************************************/
+#include "Model.h"
+#include "SchedulerTypes.h"
 
-struct Task
-{
-    uint32_t timer = 0;
-
-    uint16_t period = 100;
-
-    bool enable = true;
-
-    uint32_t counter = 0;
-
-    Task() {}
-
-    Task(uint16_t p)
-    {
-        period = p;
-    }
-};
-
-/**************************************************
- * Scheduler
- **************************************************/
+/*=============================================================================
+    Scheduler
+=============================================================================*/
 
 class Scheduler
 {
-
 public:
 
-    bool run(Task &task);
+    Scheduler();
+
+    bool begin();
+
+    void run();
+
+private:
+
+    void updateTask(
+        Task& task,
+        uint32_t period);
 
 };
 
