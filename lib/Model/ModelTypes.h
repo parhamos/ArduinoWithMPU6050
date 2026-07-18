@@ -105,8 +105,23 @@ enum class CommunicationState : uint8_t
 enum class DisplayPage : uint8_t
 {
     Acceleration = 0,
+
     Magnitude,
-    System
+
+    Statistics,
+
+    System,
+
+    Settings
+};
+
+enum class DisplayRefresh : uint8_t
+{
+    None = 0,
+
+    Partial,
+
+    Full
 };
 
 /*=============================================================================

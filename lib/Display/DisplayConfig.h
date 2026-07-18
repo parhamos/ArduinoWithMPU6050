@@ -38,7 +38,7 @@
      Display Refresh
  =============================================================================*/
  
- constexpr uint16_t kDisplayRefreshPeriod = 100U;
+ //constexpr uint16_t kDisplayRefreshPeriod = 100U;
  
  
  

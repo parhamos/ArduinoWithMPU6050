@@ -33,7 +33,6 @@
  
  struct DisplayRuntime
  {
-     DisplayPage currentPage;
  
      bool initialized;
  
