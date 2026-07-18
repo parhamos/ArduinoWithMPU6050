@@ -107,15 +107,24 @@
  
      refresh(model);
  
-     if (buttons.nextPressed())
-     {
-         nextPage();
-     }
- 
-     if (buttons.previousPressed())
-     {
-         previousPage();
-     }
+    ButtonEvent event;
+
+    if (buttons.getEvent(event))
+    {
+        switch(event.id)
+        {
+            case ButtonId::Next:
+                nextPage();
+                break;
+
+            case ButtonId::Previous:
+                previousPage();
+                break;
+
+            default:
+                break;
+        }
+    }
  
      runtime_.refreshCounter++;
  

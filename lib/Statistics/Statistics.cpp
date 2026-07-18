@@ -54,7 +54,7 @@
  bool Statistics::update(Model& model)
  {
  #if (1)
- 
+     runtime_.sampleCount++;
      if (kEnableMagnitude)
      {
          updateMagnitude(model);
@@ -120,7 +120,6 @@ void Statistics::updateMean(Model& model)
 
     runtime_.sum += model.measurement().magnitude;
 
-    runtime_.sampleCount++;
 
     if (runtime_.sampleCount == 0U)
     {
@@ -162,15 +161,28 @@ void Statistics::updateRms(Model& model)
 {
     StatisticsData& statistics = model.statistics();
 
+    /*
+        No sample available
+    */
+
+    if(runtime_.sampleCount == 0U)
+    {
+        statistics.rms = 0.0f;
+
+        return;
+    }
+
+    /*
+        Current Sample
+    */
+
     const float value = model.measurement().magnitude;
 
     runtime_.squareSum += value * value;
 
-    if (runtime_.sampleCount == 0U)
-    {
-        statistics.rms = 0.0f;
-        return;
-    }
+    /*
+        RMS
+    */
 
     statistics.rms =
         sqrtf(
@@ -203,4 +215,52 @@ void Statistics::updateSampleRate(Model& model)
 
     statistics.sampleRate =
         runtime_.sampleRate;
+}
+/*=============================================================================
+    Reset Statistics
+=============================================================================*/
+
+void Statistics::reset(Model& model)
+{
+    /*
+        Runtime
+    */
+
+    runtime_.sum               = 0.0f;
+
+    runtime_.squareSum         = 0.0f;
+
+    runtime_.peak              = 0.0f;
+
+    runtime_.sampleCount       = 0U;
+
+    runtime_.previousTimestamp = millis();
+
+    runtime_.sampleRate        = 0.0f;
+
+    /*
+        Model
+    */
+
+    StatisticsData& statistics = model.statistics();
+
+    statistics.mean       = 0.0f;
+
+    statistics.rms        = 0.0f;
+
+    statistics.peak       = 0.0f;
+
+    statistics.sampleRate = 0.0f;
+
+    /*
+        Measurement
+    */
+
+    MeasurementFrame& measurement = model.measurement();
+
+    measurement.magnitude   = 0.0f;
+
+    measurement.timestamp   = 0U;
+
+    measurement.frameNumber = 0U;
 }

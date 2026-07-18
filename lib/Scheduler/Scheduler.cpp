@@ -4,10 +4,10 @@
  * Module     : Scheduler
  * File       : Scheduler.cpp
  *
- * Version    : 2.0.0
+ * Version    : 3.0.0
  *
  * Description:
- *      Cooperative firmware scheduler.
+ *      Deterministic cyclic scheduler implementation.
  *
  ******************************************************************************/
 
@@ -15,8 +15,9 @@
 
 #include "SchedulerConfig.h"
 #include "SchedulerPrivate.h"
+
 #include "Buttons.h"
-#include "Model.h"
+#include "Measurement.h"
 #include "Sensor.h"
 #include "Calibration.h"
 #include "Filter.h"
@@ -34,20 +35,27 @@ Scheduler scheduler;
     Internal Tasks
 =============================================================================*/
 
-Task sensorTask;
-Task calibrationTask;
-Task filterTask;
-Task statisticsTask;
-Task displayTask;
-Task protocolTask;
 Task buttonsTask;
+
+Task measurementTask;
+
+Task sensorTask;
+
+Task calibrationTask;
+
+Task filterTask;
+
+Task statisticsTask;
+
+Task displayTask;
+
+Task protocolTask;
+
 /*=============================================================================
     Constructor
 =============================================================================*/
 
 Scheduler::Scheduler()
-    :
-    previousTick_(0U)
 {
 }
 
@@ -57,161 +65,174 @@ Scheduler::Scheduler()
 
 bool Scheduler::begin()
 {
-    previousTick_ = millis();
+    /*
+        Buttons
+    */
 
-    sensorTask =
-    {
-        kSensorPeriod,
-        0U,
-        0U,
-        true
-    };
+    buttonsTask.timer   = millis();
+    buttonsTask.counter = 0U;
+    buttonsTask.enable  = true;
+    buttonsTask.ready   = false;
 
-    calibrationTask =
-    {
-        kCalibrationPeriod,
-        0U,
-        0U,
-        true
-    };
+    /*
+        Measurement
+    */
 
-    filterTask =
-    {
-        kFilterPeriod,
-        0U,
-        0U,
-        true
-    };
+    measurementTask.timer   = millis();
+    measurementTask.counter = 0U;
+    measurementTask.enable  = true;
+    measurementTask.ready   = false;
 
-    statisticsTask =
-    {
-        kStatisticsPeriod,
-        0U,
-        0U,
-        true
-    };
-
-    displayTask =
-    {
-        kDisplayPeriod,
-        0U,
-        0U,
-        true
-    };
-
-    protocolTask =
-    {
-        kProtocolPeriod,
-        0U,
-        0U,
-        true
-    };
-
-    buttonsTask   =
-    {
-        kButtonsPeriod,
-        0U,
-        0U,
-        true
-    };
-
-    return true;
-}
-
-/*=============================================================================
-    Task Scheduler
-=============================================================================*/
-
-bool Scheduler::run(Task& task)
-{
-    if (!task.enable)
-    {
-        return false;
-    }
-
-    const uint32_t now = millis();
-
-    if ((now - task.timer) < task.period)
-    {
-        return false;
-    }
-
-    task.timer = now;
-
-    task.counter++;
-
-    return true;
-}
-/*=============================================================================
-    Main Scheduler
-=============================================================================*/
-
-void Scheduler::run()
-{
     /*
         Sensor
     */
 
-    if (run(sensorTask))
-    {
-        sensor.update(model);
-    }
+    sensorTask.timer   = millis();
+    sensorTask.counter = 0U;
+    sensorTask.enable  = true;
+    sensorTask.ready   = false;
 
     /*
         Calibration
     */
 
-    if (run(calibrationTask))
-    {
-        calibration.update(model);
-    }
+    calibrationTask.timer   = millis();
+    calibrationTask.counter = 0U;
+    calibrationTask.enable  = true;
+    calibrationTask.ready   = false;
 
     /*
         Filter
     */
 
-    if (run(filterTask))
-    {
-        filter.update(model);
-    }
+    filterTask.timer   = millis();
+    filterTask.counter = 0U;
+    filterTask.enable  = true;
+    filterTask.ready   = false;
 
     /*
         Statistics
     */
 
-    if (run(statisticsTask))
-    {
-        statistics.update(model);
-    }
-
-    /*
-        Buttons
-    */
-
+    statisticsTask.timer   = millis();
+    statisticsTask.counter = 0U;
+    statisticsTask.enable  = true;
+    statisticsTask.ready   = false;
 
     /*
         Display
     */
 
-    if (run(displayTask))
-    {
-        display.update(model);
-    }
+    displayTask.timer   = millis();
+    displayTask.counter = 0U;
+    displayTask.enable  = true;
+    displayTask.ready   = false;
 
     /*
-    Buttons
-*/
+        Protocol
+    */
 
-    if (run(buttonsTask))
+    protocolTask.timer   = millis();
+    protocolTask.counter = 0U;
+    protocolTask.enable  = true;
+    protocolTask.ready   = false;
+
+    return true;
+}
+
+/*=============================================================================
+    Update Task
+=============================================================================*/
+
+void Scheduler::updateTask(
+    Task& task,
+    uint32_t period)
+{
+    task.ready = false;
+
+    if (!task.enable)
+    {
+        return;
+    }
+
+    const uint32_t now = millis();
+
+    if ((now - task.timer) >= period)
+    {
+        task.timer = now;
+
+        task.counter++;
+
+        task.ready = true;
+    }
+}
+/*=============================================================================
+    Run
+=============================================================================*/
+
+void Scheduler::run()
+{
+    /*
+        Update task timers
+    */
+
+    updateTask(buttonsTask,      kButtonsPeriod);
+
+    updateTask(measurementTask,  kMeasurementPeriod);
+
+    updateTask(sensorTask,       kSensorPeriod);
+
+    updateTask(calibrationTask,  kCalibrationPeriod);
+
+    updateTask(filterTask,       kFilterPeriod);
+
+    updateTask(statisticsTask,   kStatisticsPeriod);
+
+    updateTask(displayTask,      kDisplayPeriod);
+
+    updateTask(protocolTask,     kProtocolPeriod);
+
+    /*
+        Execute tasks
+        (execution order is deterministic)
+    */
+
+    if (buttonsTask.ready)
     {
         buttons.update();
     }
 
-    /*
-        Communication
-    */
+    if (measurementTask.ready)
+    {
+        measurement.update(model);
+    }
 
-    if (run(protocolTask))
+    if (sensorTask.ready)
+    {
+        sensor.update(model);
+    }
+
+    if (calibrationTask.ready)
+    {
+        calibration.update(model);
+    }
+
+    if (filterTask.ready)
+    {
+        filter.update(model);
+    }
+
+    if (statisticsTask.ready)
+    {
+        statistics.update(model);
+    }
+
+    if (displayTask.ready)
+    {
+        display.update(model);
+    }
+
+    if (protocolTask.ready)
     {
         protocol.update(model);
     }

@@ -15,7 +15,7 @@
  #define STATISTICS_H
  
  #include <Arduino.h>
- 
+ #include "Measurement.h"
  #include "Model.h"
  #include "StatisticsConfig.h"
  #include "StatisticsPrivate.h"
@@ -30,9 +30,14 @@
  
      Statistics();
  
-     bool begin();
- 
-     bool update(Model& model);
+    bool begin();
+
+    bool update(Model& model);
+
+    /*
+        Reset all statistics
+    */
+    void reset(Model& model);
  
  private:
  

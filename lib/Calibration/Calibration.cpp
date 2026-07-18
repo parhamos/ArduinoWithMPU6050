@@ -99,15 +99,15 @@ void Calibration::calculateOffset(Model& model)
 {
     CalibrationData& calibration = model.calibration();
 
-    calibration.offset.x =
+    calibration.factoryOffset.x =
         runtime_.accumulator.x /
         static_cast<float>(runtime_.sampleCount);
 
-    calibration.offset.y =
+    calibration.factoryOffset.y =
         runtime_.accumulator.y /
         static_cast<float>(runtime_.sampleCount);
 
-    calibration.offset.z =
+    calibration.factoryOffset.z =
         runtime_.accumulator.z /
         static_cast<float>(runtime_.sampleCount);
 
@@ -142,13 +142,19 @@ void Calibration::applyCalibration(Model& model)
     */
 
     measurement.calibrated.x =
-        measurement.raw.x - calibration.offset.x;
+        measurement.raw.x
+        - calibration.factoryOffset.x
+        - calibration.zeroOffset.x;
 
     measurement.calibrated.y =
-        measurement.raw.y - calibration.offset.y;
+        measurement.raw.y
+        - calibration.factoryOffset.y
+        - calibration.zeroOffset.y;
 
     measurement.calibrated.z =
-        measurement.raw.z - calibration.offset.z;
+        measurement.raw.z
+        - calibration.factoryOffset.z
+        - calibration.zeroOffset.z;
 }
 
 /*=============================================================================
@@ -192,4 +198,44 @@ void Calibration::reset()
 bool Calibration::isCalibrated() const
 {
     return runtime_.calibrated;
+}
+/*=============================================================================
+    Capture Offset
+=============================================================================*/
+
+/*=============================================================================
+    Capture Zero Offset
+=============================================================================*/
+
+void Calibration::captureOffset(Model& model)
+{
+    CalibrationData& calibration = model.calibration();
+
+    const MeasurementFrame& measurement = model.measurement();
+
+    calibration.zeroOffset.x = measurement.calibrated.x;
+
+    calibration.zeroOffset.y = measurement.calibrated.y;
+
+    calibration.zeroOffset.z = measurement.calibrated.z;
+}
+/*=============================================================================
+    Factory Reset
+=============================================================================*/
+
+/*=============================================================================
+    Factory Reset
+=============================================================================*/
+
+void Calibration::factoryReset(Model& model)
+{
+    CalibrationData& calibration = model.calibration();
+
+    calibration.factoryOffset.x = 0.0f;
+    calibration.factoryOffset.y = 0.0f;
+    calibration.factoryOffset.z = 0.0f;
+
+    calibration.zeroOffset.x = 0.0f;
+    calibration.zeroOffset.y = 0.0f;
+    calibration.zeroOffset.z = 0.0f;
 }

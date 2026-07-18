@@ -4,53 +4,43 @@
  * Module     : Scheduler
  * File       : Scheduler.h
  *
- * Version    : 2.0.0
+ * Version    : 3.0.0
  *
  * Description:
- *      Cooperative firmware scheduler.
+ *      Deterministic cyclic scheduler.
  *
  ******************************************************************************/
 
- #ifndef SCHEDULER_H
- #define SCHEDULER_H
- 
- #include <Arduino.h>
- 
- #include "SchedulerTypes.h"
- 
- class Scheduler
- {
- public:
- 
-     /*=========================================================================
-         Construction
-     =========================================================================*/
- 
-     Scheduler();
- 
-     /*=========================================================================
-         Initialization
-     =========================================================================*/
- 
-     bool begin();
- 
-     /*=========================================================================
-         Main Scheduler
-     =========================================================================*/
- 
-     void run();
- 
-     /*=========================================================================
-         Task Scheduler
-     =========================================================================*/
- 
-     bool run(Task& task);
- 
- private:
- 
-     uint32_t previousTick_;
- };
- 
- extern Scheduler scheduler;
- 
- #endif // SCHEDULER_H
+#ifndef SCHEDULER_H
+#define SCHEDULER_H
+
+#include <Arduino.h>
+
+#include "Model.h"
+#include "SchedulerTypes.h"
+
+/*=============================================================================
+    Scheduler
+=============================================================================*/
+
+class Scheduler
+{
+public:
+
+    Scheduler();
+
+    bool begin();
+
+    void run();
+
+private:
+
+    void updateTask(
+        Task& task,
+        uint32_t period);
+
+};
+
+extern Scheduler scheduler;
+
+#endif

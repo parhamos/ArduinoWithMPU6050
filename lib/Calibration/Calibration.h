@@ -39,6 +39,14 @@
      void reset();
  
      bool isCalibrated() const;
+
+/*=============================================================================
+    Offset
+=============================================================================*/
+
+    void captureOffset(Model& model);
+
+    void factoryReset(Model& model);     
  
  private:
  

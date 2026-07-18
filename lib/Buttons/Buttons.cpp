@@ -4,158 +4,215 @@
  * Module     : Buttons
  * File       : Buttons.cpp
  *
- * Version    : 1.0.0
+ * Version    : 2.1.0
+ *
+ * Description:
+ *      Button manager implementation.
  *
  ******************************************************************************/
 
- #include "Buttons.h"
+#include "Buttons.h"
 
- #include "ButtonsConfig.h"
- 
- /*=============================================================================
-     Global Instance
- =============================================================================*/
- 
- Buttons buttons;
- 
- /*=============================================================================
-     Constructor
- =============================================================================*/
- 
- Buttons::Buttons()
- {
- }
- 
- /*=============================================================================
-     Initialization
- =============================================================================*/
- 
- bool Buttons::begin()
- {
-     pinMode(kButtonNextPin, INPUT_PULLUP);
- 
-     pinMode(kButtonPreviousPin, INPUT_PULLUP);
- 
-     pinMode(kButtonOkPin, INPUT_PULLUP);
- 
-     next_.state = false;
-     next_.previous = false;
-     next_.pressed = false;
-     next_.timer = 0U;
- 
-     previous_.state = false;
-     previous_.previous = false;
-     previous_.pressed = false;
-     previous_.timer = 0U;
- 
-     ok_.state = false;
-     ok_.previous = false;
-     ok_.pressed = false;
-     ok_.timer = 0U;
-     pinMode(kButtonNextPin, INPUT_PULLUP);
+#include "ButtonsConfig.h"
+
+/*=============================================================================
+    Global Instance
+=============================================================================*/
+
+Buttons buttons;
+
+/*=============================================================================
+    Constructor
+=============================================================================*/
+
+Buttons::Buttons()
+{
+}
+
+/*=============================================================================
+    Initialization
+=============================================================================*/
+
+bool Buttons::begin()
+{
+    /*
+        Configure GPIO
+    */
+
+    pinMode(kButtonNextPin,     INPUT_PULLUP);
+
     pinMode(kButtonPreviousPin, INPUT_PULLUP);
-    pinMode(kButtonOkPin, INPUT_PULLUP);
- 
-     return true;
- }
- 
- /*=============================================================================
-     Update
- =============================================================================*/
- 
- bool Buttons::update()
- {
-     updateButton(next_, kButtonNextPin);
- 
-     updateButton(previous_, kButtonPreviousPin);
- 
-     updateButton(ok_, kButtonOkPin);
- 
-     return true;
- }
- /*=============================================================================
-     Button Update
- =============================================================================*/
- 
- void Buttons::updateButton(
-     ButtonRuntime& button,
-     uint8_t pin)
- {
-     bool level =
-         (digitalRead(pin) == kButtonActiveLevel);
- 
-     /*
-         State changed
-     */
- 
-     if (level != button.previous)
-     {
-         button.timer = millis();
- 
-         button.previous = level;
-     }
- 
-     /*
-         Debounce
-     */
- 
-     if ((millis() - button.timer) >= kDebounceTime)
-     {
-         /*
-             Rising edge
-         */
- 
-         if ((level == true) &&
-             (button.state == false))
-         {
-             button.pressed = true;
-         }
- 
-         button.state = level;
-     }
- }
- 
- /*=============================================================================
-     Next Button Event
- =============================================================================*/
- 
- bool Buttons::nextPressed()
- {
-     if(next_.pressed)
-     {
-         next_.pressed = false;
-         return true;
-     }
- 
-     return false;
- }
- 
- /*=============================================================================
-     Previous Button Event
- =============================================================================*/
- 
- bool Buttons::previousPressed()
- {
-     if(previous_.pressed)
-     {
-         previous_.pressed = false;
-         return true;
-     }
- 
-     return false;
- }
- 
- /*=============================================================================
-     OK Button Event
- =============================================================================*/
- 
- bool Buttons::okPressed()
- {
-     if(ok_.pressed)
-     {
-         ok_.pressed = false;
-         return true;
-     }
- 
-     return false;
- }
+
+    pinMode(kButtonOkPin,       INPUT_PULLUP);
+
+    pinMode(kButtonF1Pin,       INPUT_PULLUP);
+
+    pinMode(kButtonF2Pin,       INPUT_PULLUP);
+
+    pinMode(kButtonF3Pin,       INPUT_PULLUP);
+
+    /*
+        Reset Runtime Objects
+    */
+
+    next_ = {};
+
+    previous_ = {};
+
+    ok_ = {};
+
+    f1_ = {};
+
+    f2_ = {};
+
+    f3_ = {};
+
+    /*
+        Reset Event
+    */
+
+    event_.id   = ButtonId::None;
+
+    event_.type = ButtonEventType::None;
+
+    return true;
+}
+
+/*=============================================================================
+    Update
+=============================================================================*/
+
+bool Buttons::update()
+{
+    /*
+        Clear Previous Event
+    */
+
+    event_.id   = ButtonId::None;
+
+    event_.type = ButtonEventType::None;
+
+    /*
+        Scan Buttons
+    */
+
+    updateButton(next_,
+                 kButtonNextPin,
+                 ButtonId::Next);
+
+    updateButton(previous_,
+                 kButtonPreviousPin,
+                 ButtonId::Previous);
+
+    updateButton(ok_,
+                 kButtonOkPin,
+                 ButtonId::Ok);
+
+    updateButton(f1_,
+                 kButtonF1Pin,
+                 ButtonId::F1);
+
+    updateButton(f2_,
+                 kButtonF2Pin,
+                 ButtonId::F2);
+
+    updateButton(f3_,
+                 kButtonF3Pin,
+                 ButtonId::F3);
+
+    return true;
+}
+
+/*=============================================================================
+    Update Button
+=============================================================================*/
+
+void Buttons::updateButton(
+    ButtonRuntime& button,
+    uint8_t pin,
+    ButtonId id)
+{
+    const bool level =
+        (digitalRead(pin) == kButtonPressedLevel);
+
+    /*
+        State Changed
+    */
+
+    if(level != button.previousState)
+    {
+        button.debounceTimer = millis();
+
+        button.previousState = level;
+    }
+
+    /*
+        Debounce
+    */
+
+    if((millis() - button.debounceTimer) < kDebounceTime)
+    {
+        return;
+    }
+
+    /*
+        Press
+    */
+
+    if(level != button.currentState)
+    {
+        button.currentState = level;
+
+        if(level)
+        {
+            button.pressTimer = millis();
+
+            button.longPressGenerated = false;
+
+            event_.id   = id;
+
+            event_.type = ButtonEventType::Press;
+        }
+
+        return;
+    }
+
+    /*
+        Long Press
+    */
+
+    if(level)
+    {
+        if(!button.longPressGenerated)
+        {
+            if((millis() - button.pressTimer) >=
+                kLongPressTime)
+            {
+                button.longPressGenerated = true;
+
+                event_.id   = id;
+
+                event_.type = ButtonEventType::LongPress;
+            }
+        }
+    }
+}
+/*=============================================================================
+    Get Event
+=============================================================================*/
+
+bool Buttons::getEvent(ButtonEvent& event)
+{
+    if(event_.type == ButtonEventType::None)
+    {
+        return false;
+    }
+
+    event = event_;
+
+    event_.id   = ButtonId::None;
+
+    event_.type = ButtonEventType::None;
+
+    return true;
+}

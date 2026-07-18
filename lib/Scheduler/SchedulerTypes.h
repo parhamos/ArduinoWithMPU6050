@@ -4,7 +4,7 @@
  * Module     : Scheduler
  * File       : SchedulerTypes.h
  *
- * Version    : 2.0.0
+ * Version    : 3.0.0
  *
  * Description:
  *      Scheduler data types.
@@ -17,7 +17,7 @@
 #include <Arduino.h>
 
 /*=============================================================================
-    Task Object
+    Task
 =============================================================================*/
 
 struct Task
@@ -29,6 +29,8 @@ struct Task
     uint32_t counter;
 
     bool enable;
+
+    bool ready;
 };
 
-#endif // SCHEDULER_TYPES_H
+#endif

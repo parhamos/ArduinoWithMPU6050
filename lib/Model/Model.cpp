@@ -78,10 +78,13 @@ void Model::reset()
 
     calibration_.state = CalibrationState::NotCalibrated;
 
-    calibration_.offset.x = 0.0f;
-    calibration_.offset.y = 0.0f;
-    calibration_.offset.z = 0.0f;
+    calibration_.factoryOffset.x = 0.0f;
+    calibration_.factoryOffset.y = 0.0f;
+    calibration_.factoryOffset.z = 0.0f;
 
+    calibration_.zeroOffset.x = 0.0f;
+    calibration_.zeroOffset.y = 0.0f;
+    calibration_.zeroOffset.z = 0.0f;
 
     /*-----------------------------------------------------------------------
         Statistics
